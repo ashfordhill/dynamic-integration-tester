@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store/store';
-import { updateContainer } from '../store/containersSlice';  // Correctly import updateContainer
+import { RootState } from '../../store/store';
+import { updateContainer } from '../../store/containersSlice';  // Correctly import updateContainer
 
 interface ContainerSettingsDialogProps {
   open: boolean;

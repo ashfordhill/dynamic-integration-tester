@@ -67,33 +67,3 @@ def import_compose():
     except Exception as e:
         logging.error(f"Error importing Docker Compose file: {str(e)}")
         return jsonify({"error": "Failed to import Docker Compose file"}), 500
-
-@docker_app.route('/api/execute-script', methods=['POST'])
-def execute_script():
-    script_content = request.json.get('script')
-    
-    if not script_content:
-        return jsonify({"error": "No script content provided"}), 400
-
-    try:
-        # Save the script to a temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".py") as temp_script:
-            temp_script.write(script_content.encode())
-            temp_script_path = temp_script.name
-
-        # Execute the script and capture output
-        result = subprocess.run(
-            ['python', temp_script_path],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
-        )
-
-        os.remove(temp_script_path)
-
-        return jsonify({
-            "output": result.stdout,
-            "error": result.stderr
-        }), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500

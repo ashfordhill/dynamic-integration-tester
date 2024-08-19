@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Box } from '@mui/material';
 import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import { RootState } from '../../store/store';
 import { AddContainerDialog } from './AddContainerDialog';
 import { ContainerSettingsDialog } from './ContainerSettingsDialog';
 import { RemoveContainerDialog } from './RemoveContainerDialog';

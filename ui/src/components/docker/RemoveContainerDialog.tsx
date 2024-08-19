@@ -1,8 +1,8 @@
 import React from 'react';
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { removeContainer } from '../store/containersSlice';
+import { RootState } from '../../store/store';
+import { removeContainer } from '../../store/containersSlice';
 
 interface RemoveContainerDialogProps {
   open: boolean;

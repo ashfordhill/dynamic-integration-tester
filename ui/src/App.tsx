@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { ContainerTable } from './components/ContainerTable';
-import { ActionButtons } from './components/ActionButtons';
-import { FunctionDropdown } from './components/FunctionDropdown';
-import { FunctionActionButtons } from './components/FunctionActionButtons';
-import { OutputWindow } from './components/OutputWindow';
+import { ContainerTable } from './components/docker/ContainerTable';
+import { ActionButtons } from './components/docker/ActionButtons';
+import { FunctionDropdown } from './components/functions/FunctionDropdown';
+import { FunctionActionButtons } from './components/functions/FunctionActionButtons';
+import { FunctionConsoleWindow } from './components/functions/FunctionConsoleWindow';
 import { ConnectionSettings } from './components/ConnectionSettings';
-import { FunctionEditorDialog } from './components/FunctionEditorDialog';
 import { Grid, CssBaseline, Box, Button, Input } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store/store';
@@ -13,13 +12,14 @@ import { importDockerCompose } from './utils/importDockerCompose';
 import { setContainers, updateContainerStatus } from './store/containersSlice';
 import { setSelectedFunction, addFunction, selectFunctions, selectSelectedFunction } from './store/functionsSlice';
 import axios from 'axios';
+import { FunctionEditor } from './components/functions/FunctionEditor';
 
 function App() {
   const dispatch = useDispatch();
   const containers = useSelector((state: RootState) => state.containers.containers);
-  const functions = useSelector(selectFunctions);
   const selectedFunction = useSelector(selectSelectedFunction);
   const [output, setOutput] = useState('');
+  const [consoleOutput, setConsoleOutput] = useState(''); // State for console output
   const [isEditorOpen, setEditorOpen] = useState(false);
 
   // Connection settings states
@@ -33,22 +33,14 @@ function App() {
   const [incomingPort, setIncomingPort] = useState<number | ''>('');
   const [incomingTopic, setIncomingTopic] = useState<string>('');
 
-  const availableFunctions = functions.map(func => func.name);
-
-  const handleFunctionSelect = (funcName: string) => {
-    dispatch(setSelectedFunction(funcName));
-  };
-
-  const handleAddFunction = () => {
-    setEditorOpen(true);
-  };
-
   const handleSaveFunction = (functionName: string, script: string) => {
-    dispatch(addFunction({ name: functionName, script }));
+    console.log("Saving function:", functionName); // Add this line
+    dispatch(addFunction(functionName));
     setEditorOpen(false);
   };
-
+  
   const handleCloseEditor = () => {
+    console.log("Closing editor"); // Add this line
     setEditorOpen(false);
   };
 
@@ -187,7 +179,7 @@ function App() {
             </Button>
           </Box>
           <Box mt={4}>
-            <OutputWindow output={output} />
+            <FunctionConsoleWindow />
           </Box>
           <Box mt={4}>
             <Input
@@ -198,12 +190,8 @@ function App() {
           </Box>
         </Grid>
         <Grid item xs={8}>
-          <FunctionDropdown
-            selectedFunction={selectedFunction?.name || ''}
-            onFunctionSelect={handleFunctionSelect}
-            availableFunctions={availableFunctions}
-          />
-          <FunctionActionButtons onAddFunction={handleAddFunction} />
+          <FunctionDropdown />
+          <FunctionActionButtons />
           <ConnectionSettings
             connectionType={outgoingConnectionType}
             onChangeConnectionType={setOutgoingConnectionType}
@@ -218,11 +206,8 @@ function App() {
             onChangePort={(p) => setIncomingPort(+p)}
             onChangeTopic={setIncomingTopic}
           />
-          <FunctionEditorDialog
-            open={isEditorOpen}
-            onClose={handleCloseEditor}
-            onSave={handleSaveFunction}
-          />
+          <FunctionEditor />
+          <FunctionConsoleWindow />
         </Grid>
       </Grid>
     </>

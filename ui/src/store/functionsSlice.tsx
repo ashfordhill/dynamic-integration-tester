@@ -1,48 +1,69 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from './store';
 
-export interface FunctionData {
-  name: string;
-  script: string;
+interface Function {
+  id: string,
+  name: string,
+  args?: string[]
+}
+
+interface EditorState {
+  isOpen: boolean;
+  existingData: string | undefined;
 }
 
 interface FunctionsState {
-  functions: FunctionData[];
-  selectedFunction: FunctionData | null;
+  functionIds: string[];
+  selectedFunctionId: string | undefined;
+  consoleOutput: string;
 }
 
-const initialState: FunctionsState = {
-  functions: [],
-  selectedFunction: null,
+const initialState: FunctionsState & {editor: EditorState} = {
+  functionIds: [],
+  selectedFunctionId: undefined,
+  consoleOutput: "",
+  editor: {
+    isOpen: false,
+    existingData: undefined
+  }
 };
-
+const sliceName = 'functions';
 const functionsSlice = createSlice({
-  name: 'functions',
+  name: sliceName,
   initialState,
   reducers: {
-    addFunction: (state, action: PayloadAction<FunctionData>) => {
-      state.functions.push(action.payload);
+    addFunction: (state, action: PayloadAction<string>) => {
+      state.functionIds.push(action.payload);
     },
     removeFunction: (state, action: PayloadAction<string>) => {
-      state.functions = state.functions.filter(func => func.name !== action.payload);
-      if (state.selectedFunction?.name === action.payload) {
-        state.selectedFunction = null;
+      state.functionIds = state.functionIds.filter(func => func !== action.payload);
+      if (state.selectedFunctionId === action.payload) {
+        state.selectedFunctionId = undefined;
       }
     },
-    updateFunction: (state, action: PayloadAction<FunctionData>) => {
-      const index = state.functions.findIndex(func => func.name === action.payload.name);
+    updateFunction: (state, action: PayloadAction<string>) => {
+      const index = state.functionIds.findIndex(func => func === action.payload);
       if (index !== -1) {
-        state.functions[index] = action.payload;
+        state.functionIds[index] = action.payload;
       }
     },
     setSelectedFunction: (state, action: PayloadAction<string>) => {
-      state.selectedFunction = state.functions.find(func => func.name === action.payload) || null;
+      state.selectedFunctionId = state.functionIds.find(func => func === action.payload) || undefined;
     },
+    setEditorOpen: (state, action: PayloadAction<boolean>) => {
+      state.editor.isOpen = action.payload;
+    },    
+    setConsoleOutput: (state, action: PayloadAction<string>) => {
+      state.consoleOutput = action.payload;
+    }
   },
 });
 
-export const { addFunction, removeFunction, updateFunction, setSelectedFunction } = functionsSlice.actions;
+export const { addFunction, removeFunction, updateFunction, setSelectedFunction, setConsoleOutput, setEditorOpen } = functionsSlice.actions;
 
-export const selectFunctions = (state: { functions: FunctionsState }) => state.functions.functions;
-export const selectSelectedFunction = (state: { functions: FunctionsState }) => state.functions.selectedFunction;
+export const selectFunctions = (state: RootState) => state[sliceName].functionIds;
+export const selectSelectedFunction = (state: RootState) => state[sliceName].selectedFunctionId;
+export const selectConsoleOutput = (state: RootState) => state[sliceName].consoleOutput;
+export const selectEditorOpen =  (state: RootState) => state[sliceName].editor.isOpen;
 
 export default functionsSlice.reducer;
