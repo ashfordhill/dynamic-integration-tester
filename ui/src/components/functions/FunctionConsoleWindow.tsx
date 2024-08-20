@@ -1,4 +1,3 @@
-import React from 'react';
 import { Paper, Typography, Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { selectConsoleOutput } from '../../store/functionsSlice';

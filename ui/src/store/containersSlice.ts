@@ -21,8 +21,10 @@ const initialState: ContainersState = {
   selectedContainer: null,
 };
 
+export const containerSliceName = 'containers';
+
 const containersSlice = createSlice({
-  name: 'containers',
+  name: containerSliceName,
   initialState,
   reducers: {
     setContainers: (state, action: PayloadAction<Container[]>) => {

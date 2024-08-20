@@ -1,20 +1,20 @@
-import { useState } from 'react';
 import { Select, MenuItem, Box } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { addFunction, selectFunctions, selectSelectedFunction, setEditorOpen, setSelectedFunction } from '../../store/functionsSlice';
+import { selectFunctionNames, selectSelectedFunctionName, setEditorOpen, setSelectedFunction } from '../../store/functionsSlice';
 import { FunctionEditor } from './FunctionEditor';
 
+const newFunction = "new-function";
 export const FunctionDropdown = () => {
   const dispatch = useDispatch();
-  const functions = useSelector(selectFunctions);
-  const selectedFunction = useSelector(selectSelectedFunction);
+  const functions = useSelector(selectFunctionNames);
+  const selectedFunction = useSelector(selectSelectedFunctionName);
 
   const handleFunctionChange = (event: any) => {
-    const functionId = event.target.value;
-    if (functionId === "new-function") {
+    const functionName = event.target.value;
+    if (functionName === newFunction) {
       dispatch(setEditorOpen(true)); // Open the editor if "Create New Function..." is selected
     } else {
-      dispatch(setSelectedFunction(functionId));
+      dispatch(setSelectedFunction(functionName));
     }
   };
 
@@ -29,7 +29,7 @@ export const FunctionDropdown = () => {
         {functions.map((func, index) => (
           <MenuItem key={index} value={func}>{func}</MenuItem>
         ))}
-        <MenuItem value="new-function">Create New Function...</MenuItem>
+        <MenuItem value={newFunction}>Create New Function...</MenuItem>
       </Select>
 
       <FunctionEditor

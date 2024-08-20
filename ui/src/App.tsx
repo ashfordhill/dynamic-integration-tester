@@ -4,45 +4,22 @@ import { ActionButtons } from './components/docker/ActionButtons';
 import { FunctionDropdown } from './components/functions/FunctionDropdown';
 import { FunctionActionButtons } from './components/functions/FunctionActionButtons';
 import { FunctionConsoleWindow } from './components/functions/FunctionConsoleWindow';
-import { ConnectionSettings } from './components/ConnectionSettings';
+import { ConnectionSettings } from './components/connections/ConnectionSettings';
 import { Grid, CssBaseline, Box, Button, Input } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from './store/store';
 import { importDockerCompose } from './utils/importDockerCompose';
-import { setContainers, updateContainerStatus } from './store/containersSlice';
-import { setSelectedFunction, addFunction, selectFunctions, selectSelectedFunction } from './store/functionsSlice';
+import { updateContainerStatus } from './store/containersSlice';
 import axios from 'axios';
 import { FunctionEditor } from './components/functions/FunctionEditor';
+import { initialConnectionDetails } from './types/connection';
+import { setReceiverConnection, setSenderConnection } from './store/connectionsSlice';
 
 function App() {
   const dispatch = useDispatch();
   const containers = useSelector((state: RootState) => state.containers.containers);
-  const selectedFunction = useSelector(selectSelectedFunction);
   const [output, setOutput] = useState('');
-  const [consoleOutput, setConsoleOutput] = useState(''); // State for console output
-  const [isEditorOpen, setEditorOpen] = useState(false);
 
-  // Connection settings states
-  const [outgoingConnectionType, setOutgoingConnectionType] = useState<string>('TCP');
-  const [outgoingHost, setOutgoingHost] = useState<string>('');
-  const [outgoingPort, setOutgoingPort] = useState<number | ''>('');
-  const [outgoingTopic, setOutgoingTopic] = useState<string>('');
-
-  const [incomingConnectionType, setIncomingConnectionType] = useState<string>('TCP');
-  const [incomingHost, setIncomingHost] = useState<string>('');
-  const [incomingPort, setIncomingPort] = useState<number | ''>('');
-  const [incomingTopic, setIncomingTopic] = useState<string>('');
-
-  const handleSaveFunction = (functionName: string, script: string) => {
-    console.log("Saving function:", functionName); // Add this line
-    dispatch(addFunction(functionName));
-    setEditorOpen(false);
-  };
-  
-  const handleCloseEditor = () => {
-    console.log("Closing editor"); // Add this line
-    setEditorOpen(false);
-  };
 
   const fetchContainerStatuses = async () => {
     try {
@@ -193,18 +170,12 @@ function App() {
           <FunctionDropdown />
           <FunctionActionButtons />
           <ConnectionSettings
-            connectionType={outgoingConnectionType}
-            onChangeConnectionType={setOutgoingConnectionType}
-            onChangeHost={setOutgoingHost}
-            onChangePort={(p) => setOutgoingPort(+p)}
-            onChangeTopic={setOutgoingTopic}
+            name='Sender Connection'
+            connectionSettings={{connectionDetails: initialConnectionDetails, dispatchAction: setSenderConnection}}
           />
           <ConnectionSettings
-            connectionType={incomingConnectionType}
-            onChangeConnectionType={setIncomingConnectionType}
-            onChangeHost={setIncomingHost}
-            onChangePort={(p) => setIncomingPort(+p)}
-            onChangeTopic={setIncomingTopic}
+            name='Receiver Connection'
+            connectionSettings={{connectionDetails: initialConnectionDetails, dispatchAction: setReceiverConnection}}
           />
           <FunctionEditor />
           <FunctionConsoleWindow />
