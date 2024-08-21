@@ -4,8 +4,11 @@ import logging
 import json
 
 SCRIPT_DIRECTORY = 'scripts'
+UPLOADS_DIRECTORY = 'uploads'
 PREDEFINED_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'predefined')
 USER_DEFINED_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'user_defined')
+INPUTS_DIRECTORY = os.path.join(UPLOADS_DIRECTORY, 'inputs')
+OUTPUTS_DIRECTORY = os.path.join(UPLOADS_DIRECTORY, 'outputs')
 
 class FunctionService:
     def __init__(self):
@@ -44,15 +47,26 @@ class FunctionService:
 
     def run_function(self, filename, args=None):
         try:
+            # Initialize args if not provided
             args = args or []
+
+            # Define the required arguments for input and output directories
+            input_files = os.getenv('INPUT_FILES', '/default/input/path')
+            output_files = os.getenv('OUTPUT_FILES', '/default/output/path')
+
+            # Add required arguments to the beginning of the args list
+            args = [input_files, output_files] + args
+
+            # Get the path to the Python script
             filepath = self.get_function_filepath(filename)
 
-            # Load args from JSON file if they exist
+            # Load additional args from a JSON file if it exists
             json_filepath = os.path.join(os.path.dirname(filepath), f"{filename}.json")
             if os.path.isfile(json_filepath):
                 with open(json_filepath, 'r') as json_file:
                     args += json.load(json_file)
 
+            # Run the script with the combined arguments
             result = subprocess.run(
                 ['python', filepath] + args,
                 check=True,
@@ -67,6 +81,11 @@ class FunctionService:
         except Exception as e:
             logging.error(f"Unexpected error: {str(e)}")
             return {'error': str(e)}
+
+    def get_function_filepath(self, filename):
+        # Assuming the script is located in a specific directory
+        base_dir = "/path/to/scripts"
+        return os.path.join(base_dir, f"{filename}.py")
 
     def get_function_filepath(self, filename):
         if os.path.exists(os.path.join(self.predefined_dir, f"{filename}.py")):

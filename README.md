@@ -42,7 +42,7 @@
     - Save loaded files to the backend for persistence.
     - Investigate a library to translate compose data, potentially compatible with TypeScript.
 
-- [ ] **UI Improvements**
+- [✅] **UI Improvements**
 
   - Optimize the connection settings UI (e.g., use accordions to save space).
   - Further streamline `App.tsx` for simplicity.
@@ -73,8 +73,14 @@
     - Persist project data on the backend and query it upon startup.
     - Create a `<Startup>` component for initializing this data.
 
-- [ ] **Code Editor Enhancements**
+- [✅] **Code Editor Enhancements**
+
   - Add draggable imports and draggable buttons to the code editor for:
     - Retrieving environment variables.
     - Accessing transport tools.
     - Specifying the file path for output.
+
+- [ ] **Add Clear Button to Code Editor**
+
+  - Replace import button with 'clear' button for the editor
+  - Fix some of the imported code statements - chatgpt might have done some weird stuff there

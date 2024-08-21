@@ -1,4 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "./store";
+import { setConsoleOutput } from "./functionsSlice";
 
 export interface Container {
   id: string;
@@ -13,12 +15,14 @@ export interface Container {
 
 interface ContainersState {
   containers: Container[];
-  selectedContainer: Container | null;
+  selectedContainer: Container | undefined;
+  dockerOutput: string | undefined;
 }
 
 const initialState: ContainersState = {
   containers: [],
-  selectedContainer: null,
+  selectedContainer: undefined,
+  dockerOutput: undefined,
 };
 
 export const containerSliceName = 'containers';
@@ -48,9 +52,12 @@ const containersSlice = createSlice({
         container.running = action.payload.running;
       }
     },
-    selectContainer: (state, action: PayloadAction<string | null>) => {
-      state.selectedContainer = state.containers.find(container => container.id === action.payload) || null;
+    selectContainer: (state, action: PayloadAction<string | undefined>) => {
+      state.selectedContainer = state.containers.find(container => container.id === action.payload) || undefined;
     },
+    setDockerOutput: (state, action: PayloadAction<string>) => {
+      state.dockerOutput = action.payload;
+    }
   },
 });
 
@@ -61,6 +68,9 @@ export const {
   updateContainer,
   updateContainerStatus,
   selectContainer,
+  setDockerOutput,
 } = containersSlice.actions;
 
+export const selectContainers = (state: RootState) => state[containerSliceName].containers;
+export const selectDockerOutput = (state: RootState) => state[containerSliceName].dockerOutput;
 export default containersSlice.reducer;

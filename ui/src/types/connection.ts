@@ -9,7 +9,8 @@ export interface ConnectionDetails {
 }
 
 export const initialConnectionDetails: ConnectionDetails = {
-    connectionType: "TCP",
-    host: "",
-    port: undefined,
+    connectionType: 'TCP',
+    host: 'localhost',
+    port: 12345,
+    topic: 'topic',
 }
