@@ -2,14 +2,19 @@
 
 ## Usage
 
-1. In `ui` folder do:
+1. In `ui/` do:
 
    - `npm i`
    - `npm start`
 
-2. In `backend` folder do:
+2. In `backend/` do:
    - `pip install -r requirements.txt`
    - `python main.py`
+
+### Dependencies
+
+- [Python](https://www.python.org/downloads): `3.12.5`
+- [Node](https://nodejs.org/en/download/): `v20.16.0`
 
 ## Fun ChatGPT Findings
 
