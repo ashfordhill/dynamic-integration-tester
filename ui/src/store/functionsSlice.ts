@@ -1,43 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from './store';
-
-interface Function {
-  name: string,
-  scriptContent: string,
-  args?: string[]
-}
-
-interface EditorState {
-  editor: {
-    isOpen: boolean;
-    existingData: string | undefined;
-  }
-}
-
-interface FunctionsState {
-  functionNames: string[];
-  functions: {[functionName: string]: Function};
-  selectedFunctionName: string | undefined;
-  consoleOutput: string;
-}
-
-const initialState: FunctionsState & EditorState = {
-  functionNames: [],
-  functions: {},
-  selectedFunctionName: undefined,
-  consoleOutput: "",
-  editor: {
-    isOpen: false,
-    existingData: undefined
-  }
-};
+import { FunctionProps, initialState } from '../types/function';
 
 export const functionsSliceName = 'functions';
 const functionsSlice = createSlice({
   name: functionsSliceName,
   initialState,
   reducers: {
-    addFunction: (state, action: PayloadAction<Function>) => {
+    addFunction: (state, action: PayloadAction<FunctionProps>) => {
       var fnName = action.payload.name;
       state.functionNames.push(fnName);
       state.functions[fnName] = action.payload;
@@ -50,7 +20,7 @@ const functionsSlice = createSlice({
       }
       delete state.functions[fnName]
     },
-    updateFunction: (state, action: PayloadAction<Function>) => {
+    updateFunction: (state, action: PayloadAction<FunctionProps>) => {
       var fnName = action.payload.name;
       state.functions[fnName] = action.payload;
     },
@@ -72,5 +42,6 @@ export const selectFunctionNames = (state: RootState) => state[functionsSliceNam
 export const selectSelectedFunctionName = (state: RootState) => state[functionsSliceName].selectedFunctionName;
 export const selectConsoleOutput = (state: RootState) => state[functionsSliceName].consoleOutput;
 export const selectEditorOpen =  (state: RootState) => state[functionsSliceName].editor.isOpen;
+export const selectFunctions = (state: RootState) => state[functionsSliceName].functions;
 
 export default functionsSlice.reducer;

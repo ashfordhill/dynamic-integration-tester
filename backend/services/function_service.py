@@ -4,11 +4,8 @@ import logging
 import json
 
 SCRIPT_DIRECTORY = 'scripts'
-UPLOADS_DIRECTORY = 'uploads'
 PREDEFINED_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'predefined')
 USER_DEFINED_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'user_defined')
-INPUTS_DIRECTORY = os.path.join(UPLOADS_DIRECTORY, 'inputs')
-OUTPUTS_DIRECTORY = os.path.join(UPLOADS_DIRECTORY, 'outputs')
 
 class FunctionService:
     def __init__(self):
@@ -20,18 +17,9 @@ class FunctionService:
         os.makedirs(self.predefined_dir, exist_ok=True)
         os.makedirs(self.user_defined_dir, exist_ok=True)
 
-    def list_functions(self):
-        predefined = [f for f in os.listdir(self.predefined_dir) if f.endswith('.py')]
-        user_defined = [f for f in os.listdir(self.user_defined_dir) if f.endswith('.py')]
-        return {
-            'predefined': predefined,
-            'user_defined': user_defined
-        }
-
-    def save_function(self, filename, content, args=None, is_user_defined=True):
-        directory = self.user_defined_dir if is_user_defined else self.predefined_dir
-        filepath = os.path.join(directory, f"{filename}.py")
-        json_filepath = os.path.join(directory, f"{filename}.json")
+    def save_function(self, filename, content, args=None):
+        filepath = os.path.join(self.user_defined_dir, f"{filename}.py")
+        json_filepath = os.path.join(self.user_defined_dir, f"{filename}.json")
 
         # Save the script content
         with open(filepath, 'w') as file:
@@ -50,14 +38,7 @@ class FunctionService:
             # Initialize args if not provided
             args = args or []
 
-            # Define the required arguments for input and output directories
-            input_files = os.getenv('INPUT_FILES', '/default/input/path')
-            output_files = os.getenv('OUTPUT_FILES', '/default/output/path')
-
-            # Add required arguments to the beginning of the args list
-            args = [input_files, output_files] + args
-
-            # Get the path to the Python script
+            # Determine the correct directory
             filepath = self.get_function_filepath(filename)
 
             # Load additional args from a JSON file if it exists
@@ -82,12 +63,27 @@ class FunctionService:
             logging.error(f"Unexpected error: {str(e)}")
             return {'error': str(e)}
 
-    def get_function_filepath(self, filename):
-        # Assuming the script is located in a specific directory
-        base_dir = "/path/to/scripts"
-        return os.path.join(base_dir, f"{filename}.py")
+    def list_functions(self):
+        functions = []
+        try:
+            # List all .py files in the predefined and user_defined directories
+            for directory in [self.predefined_dir, self.user_defined_dir]:
+                for filename in os.listdir(directory):
+                    if filename.endswith('.py'):
+                        function_name = filename[:-3]
+                        function_data = {'name': function_name}
+                        json_filepath = os.path.join(directory, f"{function_name}.json")
+                        if os.path.isfile(json_filepath):
+                            with open(json_filepath, 'r') as json_file:
+                                function_data['args'] = json.load(json_file)
+                        functions.append(function_data)
+            return functions
+        except Exception as e:
+            logging.error(f"Error listing functions: {str(e)}")
+            return {'error': str(e)}
 
     def get_function_filepath(self, filename):
+        # Check both directories for the function file
         if os.path.exists(os.path.join(self.predefined_dir, f"{filename}.py")):
             return os.path.join(self.predefined_dir, f"{filename}.py")
         return os.path.join(self.user_defined_dir, f"{filename}.py")

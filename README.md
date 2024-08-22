@@ -11,6 +11,25 @@
    - `pip install -r requirements.txt`
    - `python main.py`
 
+## Fun ChatGPT Findings
+
+### FunctionEditor visual improvements
+
+I sent screenshots of the `FunctionEditor.tsx` component to ChatGPT, along with the src code of that component and it sent me back code with some visual improvements:
+
+- **Before:**
+  ![Before UI Improvements](resources/chat-gpt-editor-before.png)
+- **After:**
+  ![After UI Improvements](resources/chat-gpt-editor-after.png)
+
+It could still be better but it's pretty cool that it knew to:
+
+- add label on Textfield
+- make the box wider for coding purposes
+- space the buttons evenly.
+
+**I only asked it to 'make this look better'.**
+
 ## Project TODOs
 
 ## Task List
@@ -47,15 +66,19 @@
   - Optimize the connection settings UI (e.g., use accordions to save space).
   - Further streamline `App.tsx` for simplicity.
 
-- [ ] **Function Editor Enhancements**
+- [✅] **Function Editor Enhancements**
 
   - Add custom arguments to the function editor, with a default argument for the script directory.
     - Create companion JSON files to store these arguments.
 
-- [ ] **Startup Requests**
+- [✅] **Startup Requests**
 
   - Implement a startup request to the backend to retrieve existing scripts.
-    - Ensure the UI prevents users from creating duplicate functions/scripts.
+    ~~Ensure the UI prevents users from creating duplicate functions/scripts.~~
+
+- [ ] **User defined fn delete**
+
+  - User should be able to delete any function and the companion JSON files in scripts/user_defined, via the UI
 
 - [ ] **Terminology Decision**
 
@@ -67,11 +90,10 @@
   - Save test execution data as JSON and send it to the backend.
   - Query the backend for test cases and display them in a table with status indicators (e.g., grey `-` for unrun tests).
 
-- [ ] **Project Management**
+- [✅] **Project Management**
 
-  - Implement a folder creation feature to organize test environments into separate projects.
-    - Persist project data on the backend and query it upon startup.
-    - Create a `<Startup>` component for initializing this data.
+  - Persist project data on the backend and query it upon startup.
+  - Create a `<Startup>` component for initializing this data.
 
 - [✅] **Code Editor Enhancements**
 
