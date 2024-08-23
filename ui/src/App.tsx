@@ -1,4 +1,4 @@
-import { Grid, CssBaseline } from '@mui/material'
+import { Grid, CssBaseline, Drawer, IconButton, Typography } from '@mui/material'
 import { ContainerTable } from './components/docker/ContainerTable'
 import { ActionButtons } from './components/docker/ActionButtons'
 import { FunctionDropdown } from './components/functions/FunctionDropdown'
@@ -11,40 +11,116 @@ import { initialConnectionDetails } from './types/connection'
 import { setReceiverConnection, setSenderConnection } from './store/connectionsSlice'
 import { DockerConsoleWindow } from './components/docker/DockerConsoleWindow'
 import { UserUploadYaml } from './components/docker/UserUploadYaml'
+import ReceiverOutputWindow from './components/connections/ReceiverOutputWindow'
+import FileMappingTable from './components/files/FileMappingTable'
+import CreateTestCasePopup from './components/tests/CreateTestCasePopup'
+import { useState } from 'react'
+import { Menu } from '@mui/icons-material'
 
 function App() {
+  const [leftDrawerOpen, setLeftDrawerOpen] = useState(false)
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(false)
+
   return (
     <>
       <CssBaseline />
       <Grid container spacing={2} p={2}>
-        {/* Left Panel */}
-        <Grid item xs={3}>
-          <UserUploadYaml />
-          <ContainerTable />
-          <ActionButtons />
-          <DockerControls />
-          <DockerConsoleWindow />
-        </Grid>
+        {/* Left Drawer */}
+        <Drawer
+          variant='persistent'
+          anchor='left'
+          open={leftDrawerOpen}
+          sx={{
+            width: leftDrawerOpen ? 240 : 0,
+            transition: 'width 0.3s',
+            '& .MuiDrawer-paper': {
+              width: 240,
+              boxSizing: 'border-box'
+            }
+          }}
+        >
+          {leftDrawerOpen && (
+            <>
+              <UserUploadYaml />
+              <ContainerTable />
+              <ActionButtons />
+              <DockerControls />
+              <DockerConsoleWindow />
+            </>
+          )}
+        </Drawer>
 
-        {/* Middle Panel */}
-        <Grid item xs={6}>
-          <FunctionDropdown />
-          <FunctionActionButtons />
-          <FunctionEditor />
-          <FunctionConsoleWindow />
-        </Grid>
-
-        {/* Right Panel for Connection Settings */}
-        <Grid item xs={3}>
+        {/* Middle Panel - File/Connection Settings */}
+        <Grid item xs>
+          <CreateTestCasePopup />
+          <FileMappingTable />
+          <Typography variant='h6'>Receiver Output</Typography>
+          <ReceiverOutputWindow />
           <ConnectionSettings
             name='Sender Connection'
-            connectionSettings={{ connectionDetails: initialConnectionDetails, dispatchAction: setSenderConnection }}
+            connectionSettings={{
+              connectionDetails: initialConnectionDetails,
+              dispatchAction: setSenderConnection
+            }}
           />
           <ConnectionSettings
             name='Receiver Connection'
-            connectionSettings={{ connectionDetails: initialConnectionDetails, dispatchAction: setReceiverConnection }}
+            connectionSettings={{
+              connectionDetails: initialConnectionDetails,
+              dispatchAction: setReceiverConnection
+            }}
           />
         </Grid>
+
+        {/* Right Drawer - Function Editor/Console */}
+        <Drawer
+          variant='persistent'
+          anchor='right'
+          open={rightDrawerOpen}
+          sx={{
+            width: rightDrawerOpen ? 300 : 0,
+            transition: 'width 0.3s',
+            '& .MuiDrawer-paper': {
+              width: 300,
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column'
+            }
+          }}
+        >
+          <div style={{ padding: '16px', flex: 1 }}>
+            <FunctionDropdown />
+            <FunctionActionButtons />
+            <FunctionEditor />
+            <FunctionConsoleWindow />
+          </div>
+        </Drawer>
+
+        {/* Toggle Left Drawer Button */}
+        <IconButton
+          onClick={() => setLeftDrawerOpen(!leftDrawerOpen)}
+          style={{
+            position: 'fixed',
+            left: 10,
+            top: '10px',
+            zIndex: 1300
+          }}
+        >
+          <Menu />
+        </IconButton>
+
+        {/* Toggle Right Drawer Button */}
+        <IconButton
+          onClick={() => setRightDrawerOpen(!rightDrawerOpen)}
+          style={{
+            position: 'fixed',
+            right: rightDrawerOpen ? 310 : 10,
+            top: '10px',
+            zIndex: 1300
+          }}
+        >
+          <Menu />
+        </IconButton>
       </Grid>
     </>
   )

@@ -35,6 +35,22 @@ It could still be better but it's pretty cool that it knew to:
 
 **I only asked it to 'make this look better'.**
 
+### Layout half-win
+
+This is a good example of when manual dev work is required. 
+Described the goal of the application and asked for suggestions via screenshots.
+It was useful that gpt utilized Drawers to make my single-page layout less clunky.
+
+But, it was unable to fix this little visual hiccup w/ the collapse icon after being asked repeatedly:
+
+- **Expanded Left Drawer:**
+  ![Before UI Improvements](resources/chat-gpt-drawer-layout-expanded.png)
+- **Collapsed Left Drawer:**
+  ![After UI Improvements](resources/chat-gpt-drawer-layout-collapsed.png)
+
+If I kept this layout I would probably just add some empty space at the top of the middle panel and leave room for other buttons, maybe.
+
+
 ## Project TODOs
 
 ## Task List
