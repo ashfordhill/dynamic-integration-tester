@@ -15,21 +15,30 @@ jobs:
         with:
           node-version: '14'
 
+      - name: Navigate to UI directory
+        working-directory: ./ui
+        run: echo "In UI directory"
+
       - name: Install dependencies
+        working-directory: ./ui
         run: npm install
 
       - name: Start the CRA development server
+        working-directory: ./ui
         run: npm start &
         env:
           CI: true
 
       - name: Wait for server to start
+        working-directory: ./ui
         run: sleep 30
 
       - name: Run Puppeteer to take screenshot
+        working-directory: ./ui
         run: node screenshot.js
 
       - name: Commit screenshot
+        working-directory: ./ui
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
