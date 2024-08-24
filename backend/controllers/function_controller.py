@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from services.function_service import FunctionService
+import logging 
 
 function_app = Blueprint('function_app', __name__)
 function_service = FunctionService()
@@ -40,5 +41,28 @@ def list_functions():
     try:
         functions = function_service.list_functions()
         return jsonify(functions), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@function_app.route('/api/execute-test', methods=['POST'])
+def execute_test():
+    data = request.get_json()
+
+    function_name = data['functionName']
+    sender_connection = data['senderConnection']
+    receiver_connection = data['receiverConnection']
+    input_file = data['inputFileName']
+    output_file = data['outputFileName']
+
+    # Ensure none of these values are None before joining paths
+    if None in [function_name, sender_connection, receiver_connection, input_file, output_file]:
+        logging.error("One or more arguments are None. Cannot join paths.")
+        return jsonify({"error": "Invalid arguments provided"}), 400
+
+    try:
+        result = function_service.run_test(
+            function_name, sender_connection, receiver_connection, input_file, output_file
+        )
+        return jsonify(result), 200 if 'result' in result else 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500

@@ -16,6 +16,7 @@ import FileMappingTable from './components/files/FileMappingTable'
 import CreateTestCasePopup from './components/tests/CreateTestCasePopup'
 import { useState } from 'react'
 import { Menu } from '@mui/icons-material'
+import TestCaseGrid from './components/tests/TestCaseGrid'
 
 function App() {
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(false)
@@ -52,10 +53,7 @@ function App() {
 
         {/* Middle Panel - File/Connection Settings */}
         <Grid item xs>
-          <CreateTestCasePopup />
-          <FileMappingTable />
           <Typography variant='h6'>Receiver Output</Typography>
-          <ReceiverOutputWindow />
           <ConnectionSettings
             name='Sender Connection'
             connectionSettings={{
@@ -70,6 +68,9 @@ function App() {
               dispatchAction: setReceiverConnection
             }}
           />
+          <CreateTestCasePopup />
+          <TestCaseGrid />
+          <ReceiverOutputWindow />
         </Grid>
 
         {/* Right Drawer - Function Editor/Console */}

@@ -44,7 +44,7 @@ const CreateTestCasePopup: React.FC = () => {
             type='file'
             onChange={(e) => {
               const target = e.target as HTMLInputElement
-              setInputFile(target.files ? target.files[0] : null)
+              setOutputFile(target.files ? target.files[0] : null)
             }}
             label='Select Output File (Optional)'
             InputLabelProps={{ shrink: true }}

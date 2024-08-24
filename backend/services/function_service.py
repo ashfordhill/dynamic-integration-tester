@@ -2,10 +2,19 @@ import os
 import subprocess
 import logging
 import json
-
+from typing import Dict, Any
+      
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler()]
+)
+FAIL = 'Fail'
+PASS = 'Pass'
 SCRIPT_DIRECTORY = 'scripts'
 PREDEFINED_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'predefined')
 USER_DEFINED_DIRECTORY = os.path.join(SCRIPT_DIRECTORY, 'user_defined')
+UPLOADS_DIRECTORY = 'uploads'
 
 class FunctionService:
     def __init__(self):
@@ -21,11 +30,9 @@ class FunctionService:
         filepath = os.path.join(self.user_defined_dir, f"{filename}.py")
         json_filepath = os.path.join(self.user_defined_dir, f"{filename}.json")
 
-        # Save the script content
         with open(filepath, 'w') as file:
             file.write(content)
 
-        # Save the arguments if provided
         if args:
             args_list = args.split()
             with open(json_filepath, 'w') as json_file:
@@ -35,19 +42,13 @@ class FunctionService:
 
     def run_function(self, filename, args=None):
         try:
-            # Initialize args if not provided
             args = args or []
-
-            # Determine the correct directory
             filepath = self.get_function_filepath(filename)
-
-            # Load additional args from a JSON file if it exists
             json_filepath = os.path.join(os.path.dirname(filepath), f"{filename}.json")
             if os.path.isfile(json_filepath):
                 with open(json_filepath, 'r') as json_file:
                     args += json.load(json_file)
 
-            # Run the script with the combined arguments
             result = subprocess.run(
                 ['python', filepath] + args,
                 check=True,
@@ -63,10 +64,46 @@ class FunctionService:
             logging.error(f"Unexpected error: {str(e)}")
             return {'error': str(e)}
 
+    def run_test(
+        self, 
+        function_name: str, 
+        sender_connection: Dict[str, Any], 
+        receiver_connection: Dict[str, Any], 
+        input_file: str, 
+        output_file: str
+    ) -> Dict[str, Any]:
+        try:
+            print(f"Function Name: {function_name}")
+            print(f"Sender Connection: {sender_connection}")
+            print(f"Receiver Connection: {receiver_connection}")
+            print(f"Input File: {input_file}")
+            print(f"Output File: {output_file}")
+
+            script_path = self.get_function_filepath(function_name)
+            input_file_path = os.path.join(UPLOADS_DIRECTORY, 'inputs', input_file)
+            output_file_path = os.path.join(UPLOADS_DIRECTORY, 'outputs', output_file) if output_file else ""
+
+            command = [
+                'python', script_path,
+                json.dumps(sender_connection),
+                json.dumps(receiver_connection),
+                input_file_path,
+                output_file_path
+            ]
+
+            result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+            return json.loads(result.stdout)
+
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Error executing test {function_name}: {e.stderr}")
+            return {'error': e.stderr}
+        except Exception as e:
+            logging.error(f"Unexpected error: {str(e)}")
+            return {'error': str(e)}
+
     def list_functions(self):
         functions = []
         try:
-            # List all .py files in the predefined and user_defined directories
             for directory in [self.predefined_dir, self.user_defined_dir]:
                 for filename in os.listdir(directory):
                     if filename.endswith('.py'):
@@ -83,7 +120,6 @@ class FunctionService:
             return {'error': str(e)}
 
     def get_function_filepath(self, filename):
-        # Check both directories for the function file
         if os.path.exists(os.path.join(self.predefined_dir, f"{filename}.py")):
             return os.path.join(self.predefined_dir, f"{filename}.py")
         return os.path.join(self.user_defined_dir, f"{filename}.py")
