@@ -4,7 +4,6 @@ import { Button } from '@mui/material'
 import { selectTestCaseIds, selectTestCases, executeTestCase } from '../../store/testCaseSlice'
 import { useMemo } from 'react'
 import { selectReceiverConnection, selectSenderConnection } from '../../store/connectionSlice'
-import { ConnectionDetails } from '../../types/connection'
 import { AppDispatch } from '../../store/store'
 import TestCaseResults from './TestCaseResults' // Import the new component
 import { TestCase } from '../../types/testCase'

@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from './store'
-import { Container, initialState } from '../types/container'
+import { Container, initialState } from '../types/docker'
 
-export const containerSliceName = 'container'
+export const dockerSliceName = 'docker'
 
-const containersSlice = createSlice({
-  name: containerSliceName,
+const dockerSlice = createSlice({
+  name: dockerSliceName,
   initialState,
   reducers: {
     setContainers: (state, action: PayloadAction<Container[]>) => {
@@ -46,8 +46,8 @@ export const {
   updateContainerStatus,
   selectContainer,
   setDockerOutput
-} = containersSlice.actions
+} = dockerSlice.actions
 
-export const selectContainers = (state: RootState) => state[containerSliceName].containers
-export const selectDockerOutput = (state: RootState) => state[containerSliceName].dockerOutput
-export default containersSlice.reducer
+export const selectContainers = (state: RootState) => state[dockerSliceName].containers
+export const selectDockerOutput = (state: RootState) => state[dockerSliceName].dockerOutput
+export default dockerSlice.reducer

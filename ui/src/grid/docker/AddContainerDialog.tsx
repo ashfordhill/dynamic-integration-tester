@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material'
 import { useDispatch } from 'react-redux'
-import { addContainer } from '../../store/containerSlice'
+import { addContainer } from '../../store/dockerSlice'
 import { v4 as uuidv4 } from 'uuid' // Import uuid for generating unique IDs
 
 interface AddContainerDialogProps {

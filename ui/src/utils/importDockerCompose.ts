@@ -1,4 +1,4 @@
-import { setContainers } from '../store/containerSlice'
+import { setContainers } from '../store/dockerSlice'
 import yaml from 'js-yaml'
 
 interface DockerComposeService {

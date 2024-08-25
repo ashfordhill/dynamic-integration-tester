@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { Box, Button } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import axios from 'axios'
-import { selectContainers, updateContainerStatus } from '../../store/containerSlice'
+import { selectContainers, updateContainerStatus } from '../../store/dockerSlice'
 import { setConsoleOutput } from '../../store/functionSlice'
 
 const DockerControls = () => {

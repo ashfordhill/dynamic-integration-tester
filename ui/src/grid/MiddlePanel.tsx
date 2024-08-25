@@ -1,11 +1,11 @@
 import { Box, Button } from '@mui/material'
 import { styled } from '@mui/system'
-import { ConnectionSettings } from '../components/connections/ConnectionSettings'
+import { ConnectionSettings } from './connections/ConnectionSettings'
 import { initialConnectionDetails } from '../types/connection'
 import { setReceiverConnection, setSenderConnection } from '../store/connectionSlice'
-import TestCaseGrid from '../components/tests/TestCaseGrid'
-import ReceiverOutputWindow from '../components/connections/ReceiverOutputWindow'
-import CreateTestCasePopup from '../components/tests/CreateTestCasePopup'
+import TestCaseGrid from './tests/TestCaseGrid'
+import ReceiverOutputWindow from './connections/ReceiverOutputWindow'
+import CreateTestCasePopup from './tests/CreateTestCasePopup'
 
 const MiddleContainer = styled(Box)(({ theme }) => ({
   padding: theme.spacing(2),

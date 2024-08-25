@@ -9,13 +9,13 @@ export interface Container {
     running: boolean
   }
   
-  export interface ContainerState {
+  export interface DockerState {
     containers: Container[]
     selectedContainer: Container | undefined
     dockerOutput: string | undefined
   }
   
-  export const initialState: ContainerState = {
+  export const initialState: DockerState = {
     containers: [],
     selectedContainer: undefined,
     dockerOutput: undefined

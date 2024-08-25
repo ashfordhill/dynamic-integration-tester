@@ -4,7 +4,7 @@ import { RootState } from '../../store/store'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CancelIcon from '@mui/icons-material/Cancel'
 import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
-import { selectContainers } from '../../store/containerSlice'
+import { selectContainers } from '../../store/dockerSlice'
 
 export const ContainerTable: React.FC = () => {
   const containers = useSelector(selectContainers)

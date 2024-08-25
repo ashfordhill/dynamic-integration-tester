@@ -5,10 +5,10 @@ import { RootState } from '../../store/store'
 import { AddContainerDialog } from './AddContainerDialog'
 import { ContainerSettingsDialog } from './ContainerSettingsDialog'
 import { RemoveContainerDialog } from './RemoveContainerDialog'
-import { containerSliceName } from '../../store/containerSlice'
+import { dockerSliceName } from '../../store/dockerSlice'
 
 export const ActionButtons: React.FC = () => {
-  const selectedContainer = useSelector((state: RootState) => state[containerSliceName].selectedContainer)
+  const selectedContainer = useSelector((state: RootState) => state[dockerSliceName].selectedContainer)
 
   const [addDialogOpen, setAddDialogOpen] = React.useState(false)
   const [settingsDialogOpen, setSettingsDialogOpen] = React.useState(false)

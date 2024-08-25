@@ -13,7 +13,7 @@ const ReceiverOutputWindow: React.FC = () => {
       <TextareaAutosize
         value={output}
         onChange={(e) => setOutput(e.target.value)}
-        minRows={1}
+        minRows={2}
         placeholder='Receiver Connection Output...'
         style={{
           width: '100%',
