@@ -19,6 +19,7 @@
 ## Visual Status
 
 ### Puppeteer Screenshot
+
 ![Screenshot of UI screen](./ui/screenshot.png)
 
 This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that every push to Github will result in `./ui/screenshot.png` getting regenerated from the latest build.
@@ -61,7 +62,7 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
 
   - Add a checklist to this `README.md` to track TODOs (✅ done!).
 
-- [ ] **Fix/Edit Feature**
+- [ ] **Fix Edit Functions**
 
   - Fix the 'edit' feature for functions; currently, it only opens a new function creator.
 
@@ -107,7 +108,7 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
 
   - Decide whether to use "script" or "function" as the standard term.
 
-- [ ] **Test Execution**
+- [✅] **Test Execution**
 
   - Build out the pass/fail mechanism for test execution.
   - Save test execution data as JSON and send it to the backend.
@@ -115,9 +116,9 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
 
 - [ ] **Custom Script Template**
 
-  - The backend is running the .py scripts for test execution as subprocesses. Because of this, we don't have a clean way to get like a 'result' JSON from user/predefined processes. 
-     - The workaround right now is to use some markers and pattern matching but this will not be user-friendly in the future.
-     - If test scripts had a template pattern to follow, could ditch the subprocess thing and make the backend just run the script, if it has a pre-defined template method that expects 'black box' test args
+  - The backend is running the .py scripts for test execution as subprocesses. Because of this, we don't have a clean way to get like a 'result' JSON from user/predefined processes.
+    - The workaround right now is to use some markers and pattern matching but this will not be user-friendly in the future.
+    - If test scripts had a template pattern to follow, could ditch the subprocess thing and make the backend just run the script, if it has a pre-defined template method that expects 'black box' test args
   - The template should pre-populate on the FunctionEditor when a user is creating a new script
 
 - [✅] **Project Management**
@@ -145,7 +146,7 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
 
   - Integrate the backend startup process for the Puppeteer automation.
 
-- [ ] **Resolve styling warnings/errors in console**
+- [✅] **Resolve styling warnings/errors in console**
 
   - Address issues preventing React v18 from being fully utilized.
 
@@ -159,6 +160,28 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
   - Remove dead code accumulating in the current structure.
 
 - [ ] **Serialize test results**
+
   - Implement serialization of test results on the backend.
+
 - [ ] **Query existing serialized results on startup**
+
   - Create `TestCase` and `TestResult` objects from the backend response to update the state.
+
+- [ ] **Dropdown for fn showing duplicates for scripts**
+
+  - Investigate why the dropdown is showing duplicate scripts; not sure when this started happening.
+
+- [ ] **Backend to parse the result status into a failure msg**
+
+  - Implement backend logic to parse result status and generate a failure message.
+
+- [ ] **Receiver output to make it to receiver output window**
+
+  - Ensure receiver output is correctly displayed in the receiver output window.
+
+- [ ] **Fn-selection added to Create Test Case logic**
+
+  - Consider adding fn-selection to the Create Test Case logic.
+  - Idea: Implement a button in the DataGrid that opens the Function drawer with the selected function.
+  - Ensure users can't accidentally override pre-defined scripts; consider always saving as new.
+  - Check for duplicate names on the front end by querying all functions from the backend.

@@ -5,7 +5,7 @@ services:
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
     ports:
-      - "2181:2181"
+      - '2181:2181'
 
   kafka:
     image: bitnami/kafka:latest
@@ -18,20 +18,21 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - ALLOW_PLAINTEXT_LISTENER=yes
     ports:
-      - "9092:9092"
-      - "9093:9093"
+      - '9092:9092'
+      - '9093:9093'
     depends_on:
       - zookeeper
 
   dummy-black-box-app:
+    # calling 'docker-compose build' will rebuild this Dockerfile
     build: .
     ports:
-      - "12345:12345"
+      - '12345:12345'
     environment:
-      TCP_HOST: "0.0.0.0"
-      TCP_PORT: "12345"
-      KAFKA_HOST: "kafka:9092"
-      KAFKA_TOPIC: "DummyTopic"
+      TCP_HOST: '0.0.0.0'
+      TCP_PORT: '12345'
+      KAFKA_HOST: 'kafka:9092'
+      KAFKA_TOPIC: 'DummyTopic'
     depends_on:
       - kafka
       - zookeeper
