@@ -37,7 +37,7 @@ def receive_data_via_kafka(connection_details, result_queue):
     logging.error(f"Setting up Kafka consumer for topic {connection_details['topic']} on {connection_details['host']}")
     try:
         c = Consumer({
-            'bootstrap.servers': "host.docker.internal:9093",
+            'bootstrap.servers': connection_details['host'],
             'group.id': 'my-super-special-group',
             'auto.offset.reset': 'earliest'
         })

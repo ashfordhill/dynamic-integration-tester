@@ -102,9 +102,9 @@ export const selectTestResults = (state: RootState) => state[testCaseSliceName].
 export const selectTestCaseIds = (state: RootState) => state[testCaseSliceName].testCaseIds
 export const selectTestResultIds = (state: RootState) => state[testCaseSliceName].testResultIds
 
-export const selectTestResultsByTestCaseId = (testCaseId: string) =>
+export const selectTestResultByTestCaseId = (testCaseId: string) =>
   createSelector(selectTestResults, (testResults) =>
-    Object.values(testResults).filter((result) => result.testCaseId === testCaseId)
+    Object.values(testResults).find((result) => result.testCaseId === testCaseId)
   )
 
 export const selectTestResultById = (id: string) =>

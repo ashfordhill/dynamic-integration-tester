@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Button, TextareaAutosize } from '@mui/material'
+import { Box, Button, Typography, TextareaAutosize } from '@mui/material'
 
 const ReceiverOutputWindow: React.FC = () => {
   const [output, setOutput] = useState('')
@@ -9,24 +9,33 @@ const ReceiverOutputWindow: React.FC = () => {
   }
 
   return (
-    <Box>
-      <TextareaAutosize
-        value={output}
-        onChange={(e) => setOutput(e.target.value)}
-        minRows={2}
-        placeholder='Receiver Connection Output...'
-        style={{
-          width: '100%',
-          backgroundColor: '#333', // Dark grey background
-          color: '#fff', // White text color
-          border: '1px solid #555', // Dark grey border
-          borderRadius: '4px', // Optional: Add border radius for smoother corners
-          padding: '8px' // Optional: Add padding for better text spacing
-        }}
-      />
-      <Button onClick={handleSaveOutput} variant='contained' sx={{ marginTop: 2 }}>
-        Save as File
-      </Button>
+    <Box sx={{ width: '100%', maxWidth: '800px', margin: '0 auto', mt: 4 }}>
+      <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
+        <Typography variant='h6'>Receiver Connection Output</Typography>
+      </Box>
+      <Box>
+        <TextareaAutosize
+          value={output}
+          onChange={(e) => setOutput(e.target.value)}
+          minRows={4}
+          placeholder='Receiver Connection Output...'
+          style={{
+            width: '100%',
+            minWidth: '800px',
+            backgroundColor: '#333',
+            color: '#fff',
+            border: '1px solid #555',
+            borderRadius: '4px',
+            padding: '8px',
+            boxSizing: 'border-box'
+          }}
+        />
+      </Box>
+      <Box display='flex' justifyContent='flex-end' mt={2}>
+        <Button onClick={handleSaveOutput} variant='contained'>
+          Save as Expected Output
+        </Button>
+      </Box>
     </Box>
   )
 }

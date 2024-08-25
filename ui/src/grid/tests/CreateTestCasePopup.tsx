@@ -6,7 +6,7 @@ import { styled } from '@mui/system'
 
 const StyledButton = styled(Button)(({ theme }) => ({
   width: 'auto', // Ensures the button doesn't take up too much space
-  alignSelf: 'flex-start' // Aligns the button to the left
+  alignSelf: 'flex-end' // Aligns the button to the right
 }))
 
 const CreateTestCasePopup: React.FC = () => {

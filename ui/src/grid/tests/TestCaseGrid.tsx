@@ -1,11 +1,11 @@
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useSelector, useDispatch } from 'react-redux'
-import { Button } from '@mui/material'
+import { Button, Box, Typography } from '@mui/material'
 import { selectTestCaseIds, selectTestCases, executeTestCase } from '../../store/testCaseSlice'
 import { useMemo } from 'react'
 import { selectReceiverConnection, selectSenderConnection } from '../../store/connectionSlice'
 import { AppDispatch } from '../../store/store'
-import TestCaseResults from './TestCaseResults' // Import the new component
+import TestCaseResults from './TestCaseResults' // Import the updated component
 import { TestCase } from '../../types/testCase'
 
 const TestCaseGrid = () => {
@@ -37,9 +37,7 @@ const TestCaseGrid = () => {
       field: 'results',
       headerName: 'Results',
       width: 300,
-      renderCell: (params: GridRenderCellParams) => (
-        <TestCaseResults testCaseId={params.id as string} /> // Use the new component
-      )
+      renderCell: (params: GridRenderCellParams) => <TestCaseResults testCaseId={params.id as string} />
     }
   ]
 
@@ -50,9 +48,23 @@ const TestCaseGrid = () => {
   }, [testCaseIds, testCases])
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      <DataGrid rows={rows} columns={columns} pageSizeOptions={[5]} />
-    </div>
+    <Box sx={{ height: 400, width: '100%', maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
+      <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
+        <Typography variant='h6'>Test Cases</Typography>
+        <Button variant='contained'>Create Test Case</Button>
+      </Box>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        pageSizeOptions={[5]}
+        disableColumnMenu
+        sx={{
+          '& .MuiDataGrid-scrollbar--horizontal': {
+            display: 'none' // This will hide the horizontal scrollbar
+          }
+        }}
+      />
+    </Box>
   )
 }
 
