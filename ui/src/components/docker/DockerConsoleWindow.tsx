@@ -1,6 +1,6 @@
 import { Paper, Typography, Box } from '@mui/material'
 import { useSelector } from 'react-redux'
-import { selectDockerOutput } from '../../store/containersSlice'
+import { selectDockerOutput } from '../../store/containerSlice'
 
 export const DockerConsoleWindow = () => {
   const dockerOutput = useSelector(selectDockerOutput)

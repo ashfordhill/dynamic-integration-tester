@@ -48,12 +48,7 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
 - **Collapsed Left Drawer:**
   ![After UI Improvements](resources/chat-gpt-drawer-layout-collapsed.png)
 
-If I kept this layout I would probably just add some empty space at the top of the middle panel and leave room for other buttons, maybe.
-
-
-## Project TODOs
-
-## Task List
+## TODO List
 
 - [✅] **Create Checklist**
 
@@ -67,7 +62,7 @@ If I kept this layout I would probably just add some empty space at the top of t
 
   - Implement default functions for TCP and Kafka send/receive. Ensure scripts can manage connection settings.
 
-- [ ] **File Import**
+- [✅] **File Import**
 
   - Add a file import feature to the connection settings.
 
@@ -127,3 +122,29 @@ If I kept this layout I would probably just add some empty space at the top of t
 
   - Replace import button with 'clear' button for the editor
   - Fix some of the imported code statements - chatgpt might have done some weird stuff there
+
+- [ ] **Address package deprecation warnings**
+
+  - Update `package.json` and review all dependencies for necessary updates.
+
+- [ ] **Add backend startup to GitHub Action**
+
+  - Integrate the backend startup process for the Puppeteer automation.
+
+- [ ] **Resolve styling warnings/errors in console**
+
+  - Address issues preventing React v18 from being fully utilized.
+
+- [✅] **Automate Puppeteer screenshot uploads**
+
+  - Implement functionality to auto-upload current screenshots using Puppeteer.
+
+- [ ] **Refactor function_controller/service**
+  - Split into `storage_` and `execution_` classes to improve clarity.
+  - Remove dead code accumulating in the current structure.
+
+- [ ] **Serialize test results**
+  - Implement serialization of test results on the backend.
+  
+- [ ] **Query existing serialized results on startup**
+  - Create `TestCase` and `TestResult` objects from the backend response to update the state.

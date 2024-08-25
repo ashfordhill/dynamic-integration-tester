@@ -1,8 +1,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { selectTestResultsByTestCaseId, TestResult } from '../../store/testCaseSlice';
+import { selectTestResultsByTestCaseId } from '../../store/testCaseSlice';
 import { Typography, Box } from '@mui/material';
 import { CheckCircle, Cancel, RemoveCircleOutline } from '@mui/icons-material';
+import { TestResult } from '../../types/testCase';
 
 interface TestCaseResultsProps {
   testCaseId: string;

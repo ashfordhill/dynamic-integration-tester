@@ -2,7 +2,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Button, List, ListItem, ListItemText, Typography } from '@mui/material'
-import { addInputFile, addOutputFile, selectInputFileNames, selectOutputFileNames } from '../../store/filesSlice'
+import { addInputFile, addOutputFile, selectInputFileNames, selectOutputFileNames } from '../../store/fileSlice'
 
 interface FileUploaderProps {
   type: 'input' | 'output'

@@ -14,3 +14,13 @@ export const initialConnectionDetails: ConnectionDetails = {
     port: 12345,
     topic: 'topic',
 }
+
+export interface ConnectionState {
+    senderConnection: ConnectionDetails
+    receiverConnection: ConnectionDetails
+  }
+  
+  export const initialState: ConnectionState = {
+    senderConnection: { connectionType: 'TCP', host: '127.0.0.1', port: 1234 },
+    receiverConnection: { connectionType: 'Kafka', host: '127.0.0.1', port: 9092, topic: '' }
+  }

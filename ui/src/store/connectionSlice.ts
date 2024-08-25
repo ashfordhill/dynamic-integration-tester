@@ -1,17 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from './store'
-import { ConnectionDetails } from '../types/connection'
+import { ConnectionDetails, initialState } from '../types/connection'
 
-interface ConnectionsState {
-  senderConnection: ConnectionDetails
-  receiverConnection: ConnectionDetails
-}
-
-const initialState: ConnectionsState = {
-  senderConnection: { connectionType: 'TCP', host: '127.0.0.1', port: 1234 },
-  receiverConnection: { connectionType: 'Kafka', host: '127.0.0.1', port: 9092, topic: '' }
-}
-export const connectionsSliceName = 'connections'
+export const connectionsSliceName = 'connection'
 const connectionsSlice = createSlice({
   name: connectionsSliceName,
   initialState,

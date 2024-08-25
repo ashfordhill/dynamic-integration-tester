@@ -5,7 +5,7 @@ import {
   selectSelectedFunctionName,
   setEditorOpen,
   setSelectedFunction
-} from '../../store/functionsSlice'
+} from '../../store/functionSlice'
 import { FunctionEditor } from './editor/FunctionEditor'
 
 const newFunction = 'new-function'

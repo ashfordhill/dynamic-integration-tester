@@ -13,7 +13,7 @@ import {
   selectFunctionNames,
   setConsoleOutput,
   setEditorOpen
-} from '../../../store/functionsSlice'
+} from '../../../store/functionSlice'
 
 const INPUTS_DIRECTORY = '/app/out/uploads/inputs'
 const OUTPUTS_DIRECTORY = '/app/out/uploads/outputs'

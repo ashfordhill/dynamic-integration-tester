@@ -2,6 +2,12 @@ import React, { useState } from 'react'
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material'
 import { useDispatch } from 'react-redux'
 import { addTestCase } from '../../store/testCaseSlice'
+import { styled } from '@mui/system'
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  width: 'auto', // Ensures the button doesn't take up too much space
+  alignSelf: 'flex-start' // Aligns the button to the left
+}))
 
 const CreateTestCasePopup: React.FC = () => {
   const [open, setOpen] = useState(false)
@@ -22,9 +28,9 @@ const CreateTestCasePopup: React.FC = () => {
 
   return (
     <>
-      <Button variant='contained' onClick={() => setOpen(true)}>
+      <StyledButton variant='contained' onClick={() => setOpen(true)}>
         Create Test Case
-      </Button>
+      </StyledButton>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Create Test Case</DialogTitle>
         <DialogContent>

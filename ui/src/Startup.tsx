@@ -2,7 +2,7 @@ import React, { ReactNode, useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import axios from 'axios'
 import { FunctionProps } from './types/function'
-import { addFunction } from './store/functionsSlice'
+import { addFunction } from './store/functionSlice'
 
 interface StartupProps {
   children: ReactNode

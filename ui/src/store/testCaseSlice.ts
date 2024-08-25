@@ -3,39 +3,7 @@ import { RootState } from './store'
 import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 import { ConnectionDetails } from '../types/connection'
-
-export type TestResultType = 'Pass' | 'Fail'
-
-export interface TestResult {
-  id: string
-  testCaseId: string
-  result: TestResultType
-  resultMessage?: string
-}
-
-export interface TestCase {
-  id: string
-  inputFileName: string
-  outputFileName: string | null
-}
-
-interface TestCaseState {
-  testCaseIds: string[]
-  testResultIds: string[]
-  testCases: Record<string, TestCase>
-  testResults: Record<string, TestResult>
-  loading: boolean
-  error: string | null
-}
-
-const initialState: TestCaseState = {
-  testCaseIds: [],
-  testResultIds: [],
-  testCases: {},
-  testResults: {},
-  loading: false,
-  error: null
-}
+import { dummyDataInitialState, initialState, TestResult } from '../types/testCase'
 
 export const executeTestCase = createAsyncThunk<
   { testCaseId: string; result: TestResult }, // Return type
@@ -89,7 +57,7 @@ export const executeTestCase = createAsyncThunk<
 export const testCaseSliceName = 'testCase'
 const testCaseSlice = createSlice({
   name: testCaseSliceName,
-  initialState,
+  initialState: dummyDataInitialState,
   reducers: {
     addTestCase(state, action: PayloadAction<{ inputFileName: string; outputFileName: string | null }>) {
       const id = uuidv4()

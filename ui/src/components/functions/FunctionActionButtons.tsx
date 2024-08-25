@@ -1,6 +1,6 @@
 import { Button, Box } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectSelectedFunctionName, removeFunction, setConsoleOutput, setEditorOpen } from '../../store/functionsSlice'
+import { selectSelectedFunctionName, removeFunction, setConsoleOutput, setEditorOpen } from '../../store/functionSlice'
 import axios from 'axios'
 
 export const FunctionActionButtons = () => {

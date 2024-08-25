@@ -1,12 +1,13 @@
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button } from '@mui/material'
-import { selectTestCaseIds, selectTestCases, executeTestCase, TestCase } from '../../store/testCaseSlice'
+import { selectTestCaseIds, selectTestCases, executeTestCase } from '../../store/testCaseSlice'
 import { useMemo } from 'react'
-import { selectReceiverConnection, selectSenderConnection } from '../../store/connectionsSlice'
+import { selectReceiverConnection, selectSenderConnection } from '../../store/connectionSlice'
 import { ConnectionDetails } from '../../types/connection'
 import { AppDispatch } from '../../store/store'
 import TestCaseResults from './TestCaseResults' // Import the new component
+import { TestCase } from '../../types/testCase'
 
 const TestCaseGrid = () => {
   const dispatch = useDispatch<AppDispatch>()

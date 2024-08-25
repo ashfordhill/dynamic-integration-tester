@@ -1,53 +1,53 @@
-import React, { useState } from 'react';
-import { Button, Menu, MenuItem } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { selectSenderConnection, selectReceiverConnection } from '../../../store/connectionsSlice';
+import React, { useState } from 'react'
+import { Button, Menu, MenuItem } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { selectSenderConnection, selectReceiverConnection } from '../../../store/connectionSlice'
 
 interface TransportButtonProps {
-  onSelectTransport: (importStatement: string, transportCode: string) => void;
+  onSelectTransport: (importStatement: string, transportCode: string) => void
 }
 
 const TransportButton: React.FC<TransportButtonProps> = ({ onSelectTransport }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   // Access the connection details directly from Redux
-  const senderConnection = useSelector(selectSenderConnection);
-  const receiverConnection = useSelector(selectReceiverConnection);
+  const senderConnection = useSelector(selectSenderConnection)
+  const receiverConnection = useSelector(selectReceiverConnection)
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    setAnchorEl(event.currentTarget)
+  }
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
+    setAnchorEl(null)
+  }
 
   const handleSelectTransport = (type: 'Kafka' | 'TCP' | 'UDP', action: 'send' | 'receive') => {
     if (!senderConnection || !receiverConnection) {
-      console.error('Connection details are not defined.');
-      return;
+      console.error('Connection details are not defined.')
+      return
     }
 
-    let importStatement = '';
-    let transportCode = '';
+    let importStatement = ''
+    let transportCode = ''
 
     const kafkaSendCode = `
 producer = KafkaProducer(bootstrap_servers='${senderConnection.host}:${senderConnection.port}')
 producer.send('${senderConnection.topic}', content.encode('utf-8'))
-`;
+`
 
     const kafkaReceiveCode = `
 consumer = KafkaConsumer('${receiverConnection.topic}', bootstrap_servers='${receiverConnection.host}:${receiverConnection.port}', auto_offset_reset='earliest')
 for message in consumer:
     content = message.value.decode('utf-8')
     break
-`;
+`
 
     const tcpUdpSendCode = (protocol: 'TCP' | 'UDP') => `
 with socket.socket(socket.AF_INET, socket.SOCK_${protocol === 'TCP' ? 'STREAM' : 'DGRAM'}) as s:
     s.connect(('${senderConnection.host}', ${senderConnection.port}))
     s.sendall(content.encode('utf-8'))
-`;
+`
 
     const tcpUdpReceiveCode = (protocol: 'TCP' | 'UDP') => `
 with socket.socket(socket.AF_INET, socket.SOCK_${protocol === 'TCP' ? 'STREAM' : 'DGRAM'}) as s:
@@ -59,30 +59,30 @@ with socket.socket(socket.AF_INET, socket.SOCK_${protocol === 'TCP' ? 'STREAM' :
             content = conn.recv(4096).decode('utf-8')
     else:
         content, addr = s.recvfrom(4096)
-`;
+`
 
     switch (type) {
       case 'Kafka':
-        importStatement = 'from kafka import KafkaProducer, KafkaConsumer';
-        transportCode = action === 'send' ? kafkaSendCode : kafkaReceiveCode;
-        break;
+        importStatement = 'from kafka import KafkaProducer, KafkaConsumer'
+        transportCode = action === 'send' ? kafkaSendCode : kafkaReceiveCode
+        break
       case 'TCP':
       case 'UDP':
-        importStatement = 'import socket';
-        transportCode = action === 'send' ? tcpUdpSendCode(type) : tcpUdpReceiveCode(type);
-        break;
+        importStatement = 'import socket'
+        transportCode = action === 'send' ? tcpUdpSendCode(type) : tcpUdpReceiveCode(type)
+        break
       default:
-        console.error('Unknown transport type:', type);
-        return;
+        console.error('Unknown transport type:', type)
+        return
     }
 
-    onSelectTransport(importStatement, transportCode);
-    handleClose();
-  };
+    onSelectTransport(importStatement, transportCode)
+    handleClose()
+  }
 
   return (
     <>
-      <Button variant="contained" color="primary" onClick={handleClick}>
+      <Button variant='contained' color='primary' onClick={handleClick}>
         Add Transport
       </Button>
       <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
@@ -94,7 +94,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_${protocol === 'TCP' ? 'STREAM' :
         <MenuItem onClick={() => handleSelectTransport('UDP', 'receive')}>UDP Receive</MenuItem>
       </Menu>
     </>
-  );
-};
+  )
+}
 
-export default TransportButton;
+export default TransportButton
