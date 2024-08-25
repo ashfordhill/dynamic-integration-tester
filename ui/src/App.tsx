@@ -27,7 +27,8 @@ const MiddleContent = styled('div', {
 })<MiddleContentProps>(({ leftDrawerOpen, rightDrawerOpen }) => ({
   flexGrow: 1,
   overflow: 'auto',
-  position: 'relative'
+  position: 'relative',
+  paddingTop: '16px', // Add padding to move the MiddlePanel down
 }))
 
 export const App = () => {

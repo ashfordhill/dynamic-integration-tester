@@ -1,5 +1,4 @@
-version: '3.8'
-
+version: '3'
 services:
   zookeeper:
     image: bitnami/zookeeper:latest
@@ -24,18 +23,15 @@ services:
     depends_on:
       - zookeeper
 
-  dummy-black-box-service:
-    build: ./main
+  dummy-black-box-app:
+    build: .
     ports:
       - "12345:12345"
     environment:
       TCP_HOST: "0.0.0.0"
       TCP_PORT: "12345"
       KAFKA_HOST: "kafka:9092"
-      KAFKA_TOPIC: "my-topic"
+      KAFKA_TOPIC: "DummyTopic"
     depends_on:
       - kafka
       - zookeeper
-networks:
-  default:
-    name: kafka-network

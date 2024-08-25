@@ -1,12 +1,12 @@
 import { Drawer } from '@mui/material'
 import { styled } from '@mui/system'
-import { UserUploadYaml } from '../components/docker/UserUploadYaml'
-import { ContainerTable } from '../components/docker/ContainerTable'
-import { ActionButtons } from '../components/docker/ActionButtons'
-import DockerControls from '../components/docker/DockerControls'
-import { DockerConsoleWindow } from '../components/docker/DockerConsoleWindow'
+import { UserUploadYaml } from './docker/UserUploadYaml'
+import { ContainerTable } from './docker/ContainerTable'
+import { ActionButtons } from './docker/ActionButtons'
+import DockerControls from './docker/DockerControls'
+import { DockerConsoleWindow } from './docker/DockerConsoleWindow'
 
-const drawerWidthLeft = 240;
+const drawerWidthLeft = 300
 
 interface LeftPanelProps {
   open: boolean
@@ -18,8 +18,8 @@ const StyledDrawerLeft = styled(Drawer)(({ theme }) => ({
   '& .MuiDrawer-paper': {
     width: drawerWidthLeft,
     boxSizing: 'border-box',
-    position: 'relative', // Ensure it stays within the layout flow
-  },
+    position: 'relative' // Ensure it stays within the layout flow
+  }
 }))
 
 export const LeftPanel = ({ open }: LeftPanelProps) => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button } from '@mui/material'
 import { useSelector, useDispatch } from 'react-redux'
 import { RootState } from '../../store/store'
-import { containerSliceName, updateContainer } from '../../store/containerSlice' // Correctly import updateContainer
+import { dockerSliceName, updateContainer } from '../../store/dockerSlice' // Correctly import updateContainer
 
 interface ContainerSettingsDialogProps {
   open: boolean
@@ -10,7 +10,7 @@ interface ContainerSettingsDialogProps {
 }
 
 export const ContainerSettingsDialog: React.FC<ContainerSettingsDialogProps> = ({ open, onClose }) => {
-  const selectedContainer = useSelector((state: RootState) => state[containerSliceName].selectedContainer)
+  const selectedContainer = useSelector((state: RootState) => state[dockerSliceName].selectedContainer)
   const [localContainer, setLocalContainer] = useState(selectedContainer)
   const dispatch = useDispatch()
 

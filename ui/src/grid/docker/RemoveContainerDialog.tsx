@@ -2,7 +2,7 @@ import React from 'react'
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../store/store'
-import { containerSliceName, removeContainer } from '../../store/containerSlice'
+import { dockerSliceName, removeContainer } from '../../store/dockerSlice'
 
 interface RemoveContainerDialogProps {
   open: boolean
@@ -10,7 +10,7 @@ interface RemoveContainerDialogProps {
 }
 
 export const RemoveContainerDialog: React.FC<RemoveContainerDialogProps> = ({ open, onClose }) => {
-  const selectedContainer = useSelector((state: RootState) => state[containerSliceName].selectedContainer)
+  const selectedContainer = useSelector((state: RootState) => state[dockerSliceName].selectedContainer)
   const dispatch = useDispatch()
 
   const handleRemove = () => {

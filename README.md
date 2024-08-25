@@ -113,6 +113,13 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
   - Save test execution data as JSON and send it to the backend.
   - Query the backend for test cases and display them in a table with status indicators (e.g., grey `-` for unrun tests).
 
+- [ ] **Custom Script Template**
+
+  - The backend is running the .py scripts for test execution as subprocesses. Because of this, we don't have a clean way to get like a 'result' JSON from user/predefined processes. 
+     - The workaround right now is to use some markers and pattern matching but this will not be user-friendly in the future.
+     - If test scripts had a template pattern to follow, could ditch the subprocess thing and make the backend just run the script, if it has a pre-defined template method that expects 'black box' test args
+  - The template should pre-populate on the FunctionEditor when a user is creating a new script
+
 - [✅] **Project Management**
 
   - Persist project data on the backend and query it upon startup.

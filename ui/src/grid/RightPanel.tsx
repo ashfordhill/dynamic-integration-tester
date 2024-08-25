@@ -1,9 +1,9 @@
 import { Drawer } from '@mui/material'
 import { styled } from '@mui/system'
-import { FunctionDropdown } from '../components/functions/FunctionDropdown'
-import { FunctionActionButtons } from '../components/functions/FunctionActionButtons'
-import { FunctionEditor } from '../components/functions/editor/FunctionEditor'
-import { FunctionConsoleWindow } from '../components/functions/FunctionConsoleWindow'
+import { FunctionDropdown } from './functions/FunctionDropdown'
+import { FunctionActionButtons } from './functions/FunctionActionButtons'
+import { FunctionConsoleWindow } from './functions/FunctionConsoleWindow'
+import { FunctionEditor } from './functions/editor/FunctionEditor'
 
 const drawerWidthRight = 300
 

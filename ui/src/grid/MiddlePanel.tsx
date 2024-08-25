@@ -1,60 +1,71 @@
-import { Box, Button } from '@mui/material'
-import { styled } from '@mui/system'
-import { ConnectionSettings } from '../components/connections/ConnectionSettings'
-import { initialConnectionDetails } from '../types/connection'
-import { setReceiverConnection, setSenderConnection } from '../store/connectionSlice'
-import TestCaseGrid from '../components/tests/TestCaseGrid'
-import ReceiverOutputWindow from '../components/connections/ReceiverOutputWindow'
-import CreateTestCasePopup from '../components/tests/CreateTestCasePopup'
-
-const MiddleContainer = styled(Box)(({ theme }) => ({
-  padding: theme.spacing(2),
-  flexGrow: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  gap: theme.spacing(3) // Adds spacing between sections
-}))
-
-const ConnectionRow = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start', // Ensures both are aligned to the top
-  gap: theme.spacing(2),
-  marginBottom: theme.spacing(3),
-  flexWrap: 'wrap' // Ensures wrapping on smaller screens
-}))
-
-const ConnectionItem = styled(Box)(({ theme }) => ({
-  flex: '1 1 calc(50% - 16px)', // 50% width minus gap
-  minWidth: '300px' // Ensures a reasonable minimum width before wrapping
-}))
+import { Grid, IconButton, Box, Typography, Button } from '@mui/material'
+import { ConnectionSettings } from './connections/ConnectionSettings'
+import {
+  selectReceiverConnection,
+  selectSenderConnection,
+  setReceiverConnection,
+  setSenderConnection
+} from '../store/connectionSlice'
+import TestCaseGrid from './tests/TestCaseGrid'
+import ReceiverOutputWindow from './connections/ReceiverOutputWindow'
+import CreateTestCasePopup from './tests/CreateTestCasePopup'
+import { SwapHoriz } from '@mui/icons-material'
+import { useDispatch, useSelector } from 'react-redux'
 
 export const MiddlePanel = () => {
+  const dispatch = useDispatch()
+  const senderConnection = useSelector(selectSenderConnection)
+  const receiverConnection = useSelector(selectReceiverConnection)
+
+  const handleSwapConnections = () => {
+    const currSenderConnection = { ...senderConnection }
+    dispatch(setSenderConnection(receiverConnection))
+    dispatch(setReceiverConnection(currSenderConnection))
+  }
+
   return (
-    <MiddleContainer>
-      <ConnectionRow>
-        <ConnectionItem>
+    <Grid container spacing={2} direction='column' style={{ flexGrow: 1 }} alignItems='center'>
+      <Grid
+        item
+        container
+        spacing={2}
+        alignItems='flex-start' // Pin to the top
+        justifyContent='center' // Center the whole row
+      >
+        <Grid item xs={12} sm={5} display='flex' justifyContent='center'>
           <ConnectionSettings
             name='Sender Connection'
             connectionSettings={{
-              connectionDetails: initialConnectionDetails,
+              storeValue: senderConnection,
               dispatchAction: setSenderConnection
             }}
           />
-        </ConnectionItem>
-        <ConnectionItem>
+        </Grid>
+
+        <Grid item xs='auto' display='flex' justifyContent='center'>
+          <IconButton onClick={handleSwapConnections} color='primary'>
+            <SwapHoriz fontSize='large' />
+          </IconButton>
+        </Grid>
+
+        <Grid item xs={12} sm={5} display='flex' justifyContent='center'>
           <ConnectionSettings
             name='Receiver Connection'
             connectionSettings={{
-              connectionDetails: initialConnectionDetails,
+              storeValue: receiverConnection,
               dispatchAction: setReceiverConnection
             }}
           />
-        </ConnectionItem>
-      </ConnectionRow>
-      <CreateTestCasePopup />
-      <TestCaseGrid />
-      <ReceiverOutputWindow />
-    </MiddleContainer>
+        </Grid>
+      </Grid>
+
+      <Grid item xs={12} sm={8} display='flex' justifyContent='center'>
+        <TestCaseGrid />
+      </Grid>
+
+      <Grid item xs={12} sm={8} display='flex' justifyContent='center' sx={{ marginTop: 4 }}>
+        <ReceiverOutputWindow />
+      </Grid>
+    </Grid>
   )
 }

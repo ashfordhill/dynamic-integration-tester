@@ -12,11 +12,11 @@ import {
   Button
 } from '@mui/material'
 import { ExpandMore } from '@mui/icons-material'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { ConnectionType, connectionTypes, ConnectionDetails } from '../../types/connection'
 
 interface ConnectionSettingsProps {
-  connectionDetails: ConnectionDetails
+  storeValue: ConnectionDetails
   dispatchAction: any
 }
 
@@ -25,14 +25,13 @@ export const ConnectionSettings: React.FC<{ name: string; connectionSettings: Co
   connectionSettings
 }) => {
   const dispatch = useDispatch()
-  const [connectionDetails, setConnectionDetails] = useState<ConnectionDetails>(connectionSettings.connectionDetails)
-  const [isEditMode, setIsEditMode] = useState(false)
+  const [localChanges, setLocalChanges] = useState<ConnectionDetails>(connectionSettings.storeValue)
+  const [isEditMode, setIsEditMode] = useState(true)
   const [errors, setErrors] = useState<{ [key in keyof ConnectionDetails]?: string }>({})
 
   useEffect(() => {
-    setConnectionDetails(connectionDetails)
-  }, [connectionDetails])
-
+    setLocalChanges(connectionSettings.storeValue)
+  }, [connectionSettings.storeValue])
   const validateConnectionDetails = (details: ConnectionDetails): boolean => {
     const newErrors: { [key in keyof ConnectionDetails]?: string } = {}
 
@@ -53,15 +52,15 @@ export const ConnectionSettings: React.FC<{ name: string; connectionSettings: Co
   }
 
   const handleInputChange = (field: keyof ConnectionDetails, value: string | number) => {
-    setConnectionDetails((prevState) => ({
+    setLocalChanges((prevState) => ({
       ...prevState,
       [field]: value
     }))
   }
 
   const handleSubmit = () => {
-    if (validateConnectionDetails(connectionDetails)) {
-      dispatch(connectionSettings.dispatchAction(connectionDetails))
+    if (validateConnectionDetails(localChanges)) {
+      dispatch(connectionSettings.dispatchAction(localChanges))
       setIsEditMode(!isEditMode)
     } else {
       alert('Please correct the errors before saving.')
@@ -77,7 +76,7 @@ export const ConnectionSettings: React.FC<{ name: string; connectionSettings: Co
             <InputLabel id='connection-type-select-label'>Connection Type</InputLabel>
             <Select
               labelId='connection-type-select-label'
-              value={connectionDetails.connectionType}
+              value={localChanges.connectionType}
               onChange={(e) => handleInputChange('connectionType', e.target.value as ConnectionType)}
               disabled={isEditMode}
             >
@@ -92,28 +91,30 @@ export const ConnectionSettings: React.FC<{ name: string; connectionSettings: Co
             label='Host'
             fullWidth
             margin='normal'
-            value={connectionDetails.host}
+            value={localChanges.host}
             onChange={(e) => handleInputChange('host', e.target.value)}
             disabled={isEditMode}
             error={!!errors.host}
             helperText={errors.host}
           />
+
           <TextField
             label='Port'
+            type='number'
             fullWidth
             margin='normal'
-            value={connectionDetails.port ?? ''}
-            onChange={(e) => handleInputChange('port', +e.target.value)}
+            value={localChanges.port ? localChanges.port : ''}
+            onChange={(e) => handleInputChange('port', parseInt(e.target.value))}
             disabled={isEditMode}
             error={!!errors.port}
             helperText={errors.port}
           />
-          {connectionDetails.connectionType === 'Kafka' && (
+          {localChanges.connectionType === 'Kafka' && (
             <TextField
               label='Topic'
               fullWidth
               margin='normal'
-              value={connectionDetails.topic ?? ''}
+              value={localChanges.topic ?? ''}
               onChange={(e) => handleInputChange('topic', e.target.value)}
               disabled={isEditMode}
               error={!!errors.topic}

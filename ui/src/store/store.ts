@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import containersReducer, { containerSliceName } from './containerSlice'
+import containersReducer, { dockerSliceName } from './dockerSlice'
 import functionsReducer, { functionsSliceName } from './functionSlice'
 import connectionsReducer, { connectionsSliceName } from './connectionSlice'
 import filesReducer, { filesSliceName } from './fileSlice'
@@ -8,7 +8,7 @@ import { thunk } from 'redux-thunk'
 
 export const store = configureStore({
   reducer: {
-    [containerSliceName]: containersReducer,
+    [dockerSliceName]: containersReducer,
     [functionsSliceName]: functionsReducer,
     [connectionsSliceName]: connectionsReducer,
     [filesSliceName]: filesReducer,
