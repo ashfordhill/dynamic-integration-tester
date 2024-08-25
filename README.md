@@ -16,6 +16,13 @@
 - [Python](https://www.python.org/downloads): `3.12.5`
 - [Node](https://nodejs.org/en/download/): `v20.16.0`
 
+## Visual Status
+
+### Puppeteer Screenshot
+![Screenshot of UI screen](./ui/screenshot.png)
+
+This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that every push to Github will result in `./ui/screenshot.png` getting regenerated from the latest build.
+
 ## Fun ChatGPT Findings
 
 ### FunctionEditor visual improvements
@@ -37,7 +44,7 @@ It could still be better but it's pretty cool that it knew to:
 
 ### Layout half-win
 
-This is a good example of when manual dev work is required. 
+This is a good example of when manual dev work is required.
 Described the goal of the application and asked for suggestions via screenshots.
 It was useful that gpt utilized Drawers to make my single-page layout less clunky.
 
@@ -140,11 +147,11 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
   - Implement functionality to auto-upload current screenshots using Puppeteer.
 
 - [ ] **Refactor function_controller/service**
+
   - Split into `storage_` and `execution_` classes to improve clarity.
   - Remove dead code accumulating in the current structure.
 
 - [ ] **Serialize test results**
   - Implement serialization of test results on the backend.
-  
 - [ ] **Query existing serialized results on startup**
   - Create `TestCase` and `TestResult` objects from the backend response to update the state.
