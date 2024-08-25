@@ -91,15 +91,59 @@ class FunctionService:
                 output_file_path
             ]
 
-            result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            return json.loads(result.stdout)
+            print(f"Running command: {' '.join(command)}")
+
+            # Run the subprocess and capture output
+            result = subprocess.run(
+                command, 
+                check=True, 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE, 
+                text=True,
+                timeout=60  # Increased timeout
+            )
+
+            # Output the logs
+            print("Subprocess logs (stderr):")
+            print(result.stderr)
+
+            # Extract JSON output from stdout
+            stdout_lines = result.stdout.splitlines()
+            json_output = ""
+            inside_json = False
+
+            for line in stdout_lines:
+                if line.strip() == "START_JSON_OUTPUT":
+                    inside_json = True
+                    continue
+                elif line.strip() == "END_JSON_OUTPUT":
+                    inside_json = False
+                    break
+                if inside_json:
+                    json_output += line
+
+            if json_output:
+                result_data = json.loads(json_output)
+            else:
+                logging.error("Subprocess did not return any JSON output.")
+                return {'error': "Subprocess did not return any JSON output."}
+
+            if "error" in result_data:
+                logging.error(f"Test {function_name} failed with error: {result_data['error']}")
+                return {'error': result_data['error']}
+            
+            return result_data
 
         except subprocess.CalledProcessError as e:
             logging.error(f"Error executing test {function_name}: {e.stderr}")
             return {'error': e.stderr}
+        except subprocess.TimeoutExpired as e:
+            logging.error(f"Test {function_name} timed out: {str(e)}")
+            return {'error': f"Test timed out: {str(e)}"}
         except Exception as e:
             logging.error(f"Unexpected error: {str(e)}")
             return {'error': str(e)}
+
 
     def list_functions(self):
         functions = []
