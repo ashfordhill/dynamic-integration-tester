@@ -40,11 +40,10 @@ jobs:
       - name: Commit screenshot
         working-directory: ./ui
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action"
-          git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git
           git add screenshot.png
           git commit -m "Add screenshot [skip ci]"
           git push origin HEAD:${{ github.ref }}
