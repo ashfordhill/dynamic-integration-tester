@@ -1,0 +1,49 @@
+name: Take Screenshot on Push
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.16.0'
+
+      - name: Navigate to UI directory
+        working-directory: ./ui
+        run: echo "In UI directory"
+
+      - name: Install dependencies
+        working-directory: ./ui
+        run: npm install
+
+      - name: Start the CRA development server
+        working-directory: ./ui
+        run: npm start &
+        env:
+          CI: true
+
+      - name: Wait for server to start
+        working-directory: ./ui
+        run: sleep 30
+
+      - name: Run Puppeteer to take screenshot
+        working-directory: ./ui
+        run: node screenshot.js
+
+      - name: Commit screenshot
+        working-directory: ./ui
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+          git add screenshot.png
+          git commit -m "Add screenshot [skip ci]"
+          git push origin HEAD:${{ github.ref }}
