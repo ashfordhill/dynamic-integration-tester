@@ -49,12 +49,17 @@ class FunctionService:
                 with open(json_filepath, 'r') as json_file:
                     args += json.load(json_file)
 
+            env = os.environ.copy()  # Start with a copy of the current environment
+            env['INPUT_FILES'] = os.path.join(os.path.abspath(UPLOADS_DIRECTORY), "inputs")
+            env['OUTPUT_FILES'] = os.path.join(os.path.abspath(UPLOADS_DIRECTORY), "outputs")
+
             result = subprocess.run(
                 ['python', filepath] + args,
                 check=True,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                text=True
+                text=True,
+                env=env
             )
             return {'output': result.stdout}
         except subprocess.CalledProcessError as e:

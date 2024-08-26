@@ -22,7 +22,11 @@ export const FunctionActionButtons = () => {
   const handleExecuteFunction = async () => {
     if (selectedFunction) {
       const response = await axios.post('/api/execute-script', { name: selectedFunction })
-      dispatch(setConsoleOutput(JSON.stringify(response.data)))
+      const formattedOutput = response.data.output
+        .replace(/\\n/g, '\n') // Replace literal \n with actual newline characters
+        .replace(/\\(?!n)/g, '\\\\') // Escape other backslashes properly
+        .replace(/'/g, '"')
+      dispatch(setConsoleOutput(formattedOutput))
     }
   }
 
