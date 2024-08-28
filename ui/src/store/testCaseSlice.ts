@@ -3,20 +3,24 @@ import { RootState } from './store'
 import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 import { ConnectionDetails } from '../types/connection'
-import { dummyDataInitialState, initialState, TestResult } from '../types/testCase'
+import { dummyDataInitialState, TestCase, TestResult } from '../types/testCase'
 
 export const executeTestCase = createAsyncThunk<
   { testCaseId: string; result: TestResult }, // Return type
-  { testCaseId: string; senderConnection: ConnectionDetails; receiverConnection: ConnectionDetails }, // Argument types
+  {
+    testCaseId: string
+    senderConnection: ConnectionDetails
+    receiverConnection: ConnectionDetails
+    functionName: string
+  }, // Argument types
   { state: RootState; rejectValue: string } // Thunk configuration
 >(
   'testCase/executeTestCase',
-  async ({ testCaseId, senderConnection, receiverConnection }, { rejectWithValue, getState }) => {
+  async ({ testCaseId, functionName, senderConnection, receiverConnection }, { rejectWithValue, getState }) => {
     try {
       const state = getState() as RootState
       const testCase = state.testCase.testCases[testCaseId]
 
-      const functionName = 'SendAndReceiveOrTimeout' // Replace this with actual logic to get the function name
       const payload = {
         functionName,
         senderConnection,
@@ -24,25 +28,14 @@ export const executeTestCase = createAsyncThunk<
         inputFileName: testCase.inputFileName,
         outputFileName: testCase.outputFileName || null
       }
-      const response = await axios.post('/api/execute-test', {
-        functionName,
-        senderConnection,
-        receiverConnection,
-        inputFileName: testCase.inputFileName,
-        outputFileName: testCase.outputFileName || null
-      })
-      console.log(JSON.stringify(response, null, 2))
-
-      if (response.data.error) {
-        //return rejectWithValue(response.data.error)
-        console.error('data had error field defined???')
-      }
+      const response = await axios.post('/api/execute-test', payload)
+      console.debug(JSON.stringify(response, null, 2))
 
       const resultId = uuidv4()
       const result: TestResult = {
         id: resultId,
         testCaseId: testCaseId,
-        result: response.data.result.includes('Fail') ? 'Fail' : 'Pass',
+        result: response.data.result.includes('Pass') ? 'Pass' : 'Fail',
         resultMessage: response.data.resultMessage
       }
       console.log(JSON.stringify(result))
@@ -59,16 +52,17 @@ const testCaseSlice = createSlice({
   name: testCaseSliceName,
   initialState: dummyDataInitialState,
   reducers: {
-    addTestCase(state, action: PayloadAction<{ inputFileName: string; outputFileName: string | null }>) {
-      const id = uuidv4()
-      state.testCaseIds.push(id)
-      state.testCases[id] = { ...action.payload, id }
+    addTestCase: (state, action: PayloadAction<TestCase>) => {
+      const newTestCase = action.payload
+      state.testCaseIds.push(newTestCase.id)
+      state.testCases[newTestCase.id] = newTestCase
     },
     addTestResult(state, action: PayloadAction<TestResult>) {
-      const { id, testCaseId } = action.payload
+      const { id } = action.payload
       state.testResultIds.push(id)
       state.testResults[id] = action.payload
     },
+
     clearError(state) {
       state.error = null
     }
@@ -82,7 +76,7 @@ const testCaseSlice = createSlice({
       .addCase(
         executeTestCase.fulfilled,
         (state, action: PayloadAction<{ testCaseId: string; result: TestResult }>) => {
-          const { testCaseId, result } = action.payload
+          const { result } = action.payload
           state.testResultIds.push(result.id)
           state.testResults[result.id] = result
           state.loading = false
@@ -111,6 +105,6 @@ export const selectTestResultById = (id: string) =>
   createSelector(selectTestResults, (testResults) => Object.values(testResults).find((result) => result.id === id))
 
 export const selectTestCaseById = (id: string) =>
-  createSelector(selectTestResults, (testResults) => Object.values(testResults).find((result) => result.id === id))
+  createSelector(selectTestCases, (testCases) => Object.values(testCases).find((testCase) => testCase.id === id))
 
 export default testCaseSlice.reducer

@@ -62,11 +62,14 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
 
   - Add a checklist to this `README.md` to track TODOs (✅ done!).
 
-- [ ] **Fix Edit Functions**
+- [ ] **Fix Edit Functions and Add Edit Test Case**
 
   - Fix the 'edit' feature for functions; currently, it only opens a new function creator.
+  - Add edit button for Test Case inside the DataGrid. Popup should open with current values
+    - rename CreateTestCasePopup to more generic to be inclusive of both editing and creating
+    - have this component take in button name and curr ID of the TestCase being edited or null 
 
-- [ ] **Default Functions**
+- [✅] **Default Functions**
 
   - Implement default functions for TCP and Kafka send/receive. Ensure scripts can manage connection settings.
 
@@ -138,9 +141,10 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
   - Replace import button with 'clear' button for the editor
   - Fix some of the imported code statements - chatgpt might have done some weird stuff there
 
-- [ ] **Address package deprecation warnings**
+- [❌] **Address package deprecation warnings**
 
-  - Update `package.json` and review all dependencies for necessary updates.
+  - ~~Update `package.json` and review all dependencies for necessary updates.~~
+    - prob not worth it; tried doing `npm audit fix --force` and it broke my app
 
 - [ ] **Add backend startup to GitHub Action**
 
@@ -167,9 +171,10 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
 
   - Create `TestCase` and `TestResult` objects from the backend response to update the state.
 
-- [ ] **Dropdown for fn showing duplicates for scripts**
+- [✅] **Dropdown for fn showing duplicates for scripts**
 
-  - Investigate why the dropdown is showing duplicate scripts; not sure when this started happening.
+  - ~~Investigate why the dropdown is showing duplicate scripts; not sure when this started happening.~~
+  - Apparently React.StrictMode causes all components to mount twice. Kinda seems yucky. Rm'd.
 
 - [ ] **Backend to parse the result status into a failure msg**
 

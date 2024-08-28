@@ -8,7 +8,6 @@ import {
 } from '../store/connectionSlice'
 import TestCaseGrid from './tests/TestCaseGrid'
 import ReceiverOutputWindow from './connections/ReceiverOutputWindow'
-import CreateTestCasePopup from './tests/CreateTestCasePopup'
 import { SwapHoriz } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
 

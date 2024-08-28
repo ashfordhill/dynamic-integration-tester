@@ -1,36 +1,64 @@
 import React, { useState } from 'react'
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material'
-import { useDispatch } from 'react-redux'
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
+} from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
 import { addTestCase } from '../../store/testCaseSlice'
 import { styled } from '@mui/system'
-
+import { selectFunctionNames } from '../../store/functionSlice'
+import { v4 as uuidv4 } from 'uuid'
 const StyledButton = styled(Button)(({ theme }) => ({
   width: 'auto', // Ensures the button doesn't take up too much space
   alignSelf: 'flex-end' // Aligns the button to the right
 }))
 
-const CreateTestCasePopup: React.FC = () => {
+export const CreateTestCasePopup: React.FC = () => {
   const [open, setOpen] = useState(false)
   const [inputFile, setInputFile] = useState<File | null>(null)
   const [outputFile, setOutputFile] = useState<File | null>(null)
+  const [selectedFunction, setSelectedFunction] = useState<string>('')
   const dispatch = useDispatch()
+  const functionNames = useSelector(selectFunctionNames)
 
   const handleCreate = () => {
-    if (inputFile) {
-      dispatch(addTestCase({ inputFileName: inputFile.name, outputFileName: outputFile?.name || null }))
+    if (inputFile && selectedFunction) {
+      dispatch(
+        addTestCase({
+          id: uuidv4(),
+          inputFileName: inputFile.name,
+          outputFileName: outputFile?.name || null,
+          functionName: selectedFunction // Include the selected function
+        })
+      )
       setOpen(false)
       setInputFile(null)
       setOutputFile(null)
+      setSelectedFunction('')
     } else {
-      // Handle error - input file is required
+      // Handle error - input file and function are required
     }
   }
 
   return (
     <>
-      <StyledButton variant='contained' onClick={() => setOpen(true)}>
+      <Button
+        variant='contained'
+        onClick={() => {
+          console.log('Button clicked')
+          setOpen(true)
+        }}
+      >
         Create Test Case
-      </StyledButton>
+      </Button>
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Create Test Case</DialogTitle>
         <DialogContent>
@@ -57,6 +85,16 @@ const CreateTestCasePopup: React.FC = () => {
             fullWidth
             margin='dense'
           />
+          <FormControl fullWidth margin='dense' required>
+            <InputLabel>Select Function</InputLabel>
+            <Select value={selectedFunction} onChange={(e) => setSelectedFunction(e.target.value as string)}>
+              {functionNames.map((fn) => (
+                <MenuItem key={fn} value={fn}>
+                  {fn}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
@@ -68,5 +106,3 @@ const CreateTestCasePopup: React.FC = () => {
     </>
   )
 }
-
-export default CreateTestCasePopup

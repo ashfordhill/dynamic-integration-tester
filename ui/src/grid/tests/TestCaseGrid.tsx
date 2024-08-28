@@ -7,6 +7,7 @@ import { selectReceiverConnection, selectSenderConnection } from '../../store/co
 import { AppDispatch } from '../../store/store'
 import TestCaseResults from './TestCaseResults' // Import the updated component
 import { TestCase } from '../../types/testCase'
+import { CreateTestCasePopup } from './CreateTestCasePopup'
 
 const TestCaseGrid = () => {
   const dispatch = useDispatch<AppDispatch>()
@@ -16,7 +17,15 @@ const TestCaseGrid = () => {
   const testCases: Record<string, TestCase> = useSelector(selectTestCases)
 
   const handleExecute = (testCaseId: string) => {
-    dispatch(executeTestCase({ testCaseId, senderConnection, receiverConnection }))
+    const testCase = testCases[testCaseId]
+    if (testCase) {
+      dispatch(
+        executeTestCase({ testCaseId, senderConnection, receiverConnection, functionName: testCase.functionName })
+      )
+    } else {
+      // I don't think this would ever happen?
+      console.error('Could not find test case with ID of {}', testCaseId)
+    }
   }
 
   const columns: GridColDef[] = [
@@ -51,7 +60,7 @@ const TestCaseGrid = () => {
     <Box sx={{ height: 400, width: '100%', maxWidth: '800px', margin: '0 auto', position: 'relative' }}>
       <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
         <Typography variant='h6'>Test Cases</Typography>
-        <Button variant='contained'>Create Test Case</Button>
+        <CreateTestCasePopup />
       </Box>
       <DataGrid
         rows={rows}

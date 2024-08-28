@@ -13,6 +13,7 @@ export interface TestCase {
   id: string
   inputFileName: string
   outputFileName: string | null
+  functionName: string
 }
 
 export interface TestCaseState {
@@ -51,17 +52,20 @@ export const dummyDataInitialState: TestCaseState = {
     [testCase1Id]: {
       id: testCase1Id,
       inputFileName: 'New Text Document.xml',
-      outputFileName: 'New Text Document.xml' // No TestResult for this TestCase
+      outputFileName: 'New Text Document.xml', // No TestResult for this TestCase
+      functionName: 'SendAndReceiveOrTimeout'
     },
     [testCase2Id]: {
       id: testCase2Id,
       inputFileName: 'New Text Document.xml',
-      outputFileName: 'New Text Document.xml' // TestCase with a 'fail' TestResult
+      outputFileName: 'New Text Document.xml', // TestCase with a 'fail' TestResult
+      functionName: 'SendAndReceiveOrTimeout'
     },
     [testCase3Id]: {
       id: testCase3Id,
       inputFileName: 'New Text Document.xml',
-      outputFileName: 'New Text Document.xml' // TestCase with a 'pass' TestResult
+      outputFileName: 'New Text Document.xml', // TestCase with a 'pass' TestResult
+      functionName: 'SendAndReceiveOrTimeout'
     }
   },
   testResults: {

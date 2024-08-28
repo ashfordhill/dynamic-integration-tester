@@ -10,14 +10,12 @@ import { createRoot } from 'react-dom/client'
 
 const root = createRoot(document.getElementById('root') as Element)
 root.render(
-  <React.StrictMode>
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Startup>
-          <App />
-        </Startup>
-      </ThemeProvider>
-    </Provider>
-  </React.StrictMode>
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Startup>
+        <App />
+      </Startup>
+    </ThemeProvider>
+  </Provider>
 )

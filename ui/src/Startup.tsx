@@ -29,6 +29,6 @@ export const Startup: React.FC<StartupProps> = ({ children }) => {
     }
 
     fetchFunctions()
-  }, [dispatch])
+  }, [])
   return <>{children}</>
 }

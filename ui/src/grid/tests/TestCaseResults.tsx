@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectTestResultByTestCaseId } from '../../store/testCaseSlice'
-import { Typography, Box, IconButton, Tooltip, Dialog, DialogTitle, DialogContent } from '@mui/material'
+import { Box, IconButton, Tooltip, Dialog, DialogTitle, DialogContent } from '@mui/material'
 import { CheckCircle, Cancel, RemoveCircleOutline, Info as InfoIcon, Close } from '@mui/icons-material'
 import { TestResult } from '../../types/testCase'
 
@@ -12,12 +12,6 @@ interface TestCaseResultsProps {
 const TestCaseResults: React.FC<TestCaseResultsProps> = ({ testCaseId }) => {
   const result: TestResult | undefined = useSelector(selectTestResultByTestCaseId(testCaseId))
   const [resultDialogOpen, setResultDialogOpen] = useState(false)
-  const [resultMessage, setResultMessage] = useState('')
-
-  const handleCloseErrorDialog = () => {
-    setResultDialogOpen(false)
-    setResultMessage('')
-  }
 
   if (!result) {
     return (
