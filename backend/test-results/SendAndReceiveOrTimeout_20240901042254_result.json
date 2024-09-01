@@ -1,0 +1,25 @@
+{
+    "function_name": "SendAndReceiveOrTimeout",
+    "sender_connection": {
+        "connectionType": "TCP",
+        "host": "127.0.0.1",
+        "port": 12345
+    },
+    "receiver_connection": {
+        "connectionType": "Kafka",
+        "host": "host.docker.internal",
+        "port": 9093,
+        "topic": "DummyTopic"
+    },
+    "input_file": "fake.pcapng",
+    "output_file": "fake.xml",
+    "output": "",
+    "input": "",
+    "status": "success",
+    "timestamp": "2024-09-01T04:22:54.487602",
+    "results": {
+        "result": "Fail",
+        "resultMessage": "Failed to send data via TCP: [WinError 10061] No connection could be made because the target machine actively refused it",
+        "details": {}
+    }
+}

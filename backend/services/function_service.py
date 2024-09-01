@@ -3,7 +3,8 @@ import subprocess
 import logging
 import json
 from typing import Dict, Any
-      
+from datetime import datetime
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -133,11 +134,38 @@ class FunctionService:
                 logging.error("Subprocess did not return any JSON output.")
                 return {'error': "Subprocess did not return any JSON output."}
 
-            if "error" in result_data:
-                logging.error(f"Test {function_name} failed with error: {result_data['error']}")
-                return {'error': result_data['error']}
+            # Check if the test succeeded
+            test_status = "success" if "error" not in result_data else "failed"
+
+            # Prepare the result to be saved in a JSON file
+            test_result = {
+                "function_name": function_name,
+                "sender_connection": sender_connection,
+                "receiver_connection": receiver_connection,
+                "input_file": input_file,
+                "output_file": output_file,
+                "output": result_data.get("output", ""),
+                "input": result_data.get("input", ""),
+                "status": test_status,
+                "timestamp": datetime.utcnow().isoformat(),
+                "results": result_data
+            }
+
+            # Include timestamp in the filename
+            timestamp = datetime.utcnow().strftime("%Y%m%d%H%M%S")
             
-            return result_data
+            # Save all test results in the test-results directory at the root level
+            test_result_dir = os.path.join(os.getcwd(), 'test-results')
+            os.makedirs(test_result_dir, exist_ok=True)
+            test_result_path = os.path.join(test_result_dir, f"{function_name}_{timestamp}_result.json")
+
+            logging.error(f"Saving test result to {test_result_path}")  # Log the file path
+
+            with open(test_result_path, 'w') as json_file:
+                json.dump(test_result, json_file, indent=4)
+                logging.error(f"Test result saved to {test_result_path}")  # Log after saving
+
+            return test_result
 
         except subprocess.CalledProcessError as e:
             logging.error(f"Error executing test {function_name}: {e.stderr}")
@@ -148,7 +176,6 @@ class FunctionService:
         except Exception as e:
             logging.error(f"Unexpected error: {str(e)}")
             return {'error': str(e)}
-
 
     def list_functions(self):
         functions = []

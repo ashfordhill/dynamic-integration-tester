@@ -1,3 +1,6 @@
+import os
+import glob
+import json
 from flask import Blueprint, request, jsonify
 from services.function_service import FunctionService
 import logging 
@@ -63,6 +66,27 @@ def execute_test():
         result = function_service.run_test(
             function_name, sender_connection, receiver_connection, input_file, output_file
         )
-        return jsonify(result), 200 if 'result' in result else 500
+        return jsonify(result), 200 if 'status' in result else 500
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@function_app.route('/api/test-results', methods=['GET'])
+def list_test_results():
+    try:
+        test_results_dir = os.path.join(os.getcwd(), 'test-results')
+        logging.error(f"Looking for JSON files in {test_results_dir}")  # Log directory path
+
+        json_files = glob.glob(os.path.join(test_results_dir, "*.json"))
+        logging.error(f"Found JSON files: {json_files}")  # Log found files
+
+        test_results = []
+        for json_file in json_files:
+            with open(json_file, 'r') as file:
+                data = json.load(file)
+                logging.error(f"Loaded data from {json_file}: {data}")  # Log loaded data
+                test_results.append(data)
+
+        return jsonify(test_results), 200
+    except Exception as e:
+        logging.error(f"Error listing test results: {str(e)}")
         return jsonify({"error": str(e)}), 500

@@ -29,15 +29,18 @@ export const executeTestCase = createAsyncThunk<
         outputFileName: testCase.outputFileName || null
       }
       const response = await axios.post('/api/execute-test', payload)
-      console.debug(JSON.stringify(response, null, 2))
+      console.debug(JSON.stringify(response.data, null, 2))
 
       const resultId = uuidv4()
+      const rawResult = response.data.results
+
       const result: TestResult = {
         id: resultId,
         testCaseId: testCaseId,
-        result: response.data.result.includes('Pass') ? 'Pass' : 'Fail',
-        resultMessage: response.data.resultMessage
+        result: rawResult.result.includes('Pass') ? 'Pass' : 'Fail',
+        resultMessage: rawResult.resultMessage || 'No result message provided'
       }
+
       console.log(JSON.stringify(result))
 
       return { testCaseId, result }
