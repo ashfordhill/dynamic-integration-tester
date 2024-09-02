@@ -10,16 +10,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # Backend Setup
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12' # Specify the Python version you need
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt # Make sure you have a requirements.txt file
+
+      - name: Start the backend server
+        working-directory: ./backend
+        run: python main.py &
+        env:
+          FLASK_ENV: development # or any other environment variables your backend needs
+
+      # UI Setup
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.16.0'
 
-      - name: Navigate to UI directory
-        working-directory: ./ui
-        run: echo "In UI directory"
-
-      - name: Install dependencies
+      - name: Install UI dependencies
         working-directory: ./ui
         run: npm install
 
@@ -29,8 +44,7 @@ jobs:
         env:
           CI: true
 
-      - name: Wait for server to start
-        working-directory: ./ui
+      - name: Wait for servers to start
         run: sleep 20
 
       - name: Run Puppeteer to take screenshot
