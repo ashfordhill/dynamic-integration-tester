@@ -4,9 +4,15 @@ import json
 from flask import Blueprint, request, jsonify
 from services.function_service import FunctionService
 import logging 
+import uuid  # Import the uuid module
 
 function_app = Blueprint('function_app', __name__)
 function_service = FunctionService()
+UPLOADS_DIRECTORY = os.path.join(os.getcwd(), 'uploads')
+
+# Ensure uploads directories exist
+os.makedirs(os.path.join(UPLOADS_DIRECTORY, 'inputs'), exist_ok=True)
+os.makedirs(os.path.join(UPLOADS_DIRECTORY, 'outputs'), exist_ok=True)
 
 @function_app.route('/api/save-script', methods=['POST'])
 def save_script():
@@ -90,3 +96,44 @@ def list_test_results():
     except Exception as e:
         logging.error(f"Error listing test results: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@function_app.route('/api/upload-test-case-resources', methods=['POST'])
+def upload_test_case_resources():
+    try:
+        print(f"request: {request}")
+        input_file = request.files.get('inputFile')
+        output_file = request.files.get('outputFile')
+        function_name = request.form.get('functionName')
+
+        if not input_file or not function_name:
+            return jsonify({"error": "Input file and function name are required"}), 400
+
+        # Save the input file
+        input_filename = input_file.filename
+        input_file_path = os.path.join(UPLOADS_DIRECTORY, 'inputs', input_filename)
+        input_file.save(input_file_path)
+
+        # Save the output file if provided
+        output_filename = None
+        if output_file:
+            output_filename = output_file.filename
+            output_file_path = os.path.join(UPLOADS_DIRECTORY, 'outputs', output_filename)
+            output_file.save(output_file_path)
+
+        # Generate a new test case ID
+        test_case_id = uuid.uuid4()
+
+        return jsonify({
+            "testCaseId": test_case_id,
+            "inputFileName": input_filename,
+            "outputFileName": output_filename,
+            "functionName": function_name
+        }), 200
+
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500    
+@function_app.route('/api/save-test-result', methods=['POST'])
+def save_test_result():
+    data = request.get_json()
+    return function_service.save_test_result(data)

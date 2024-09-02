@@ -67,7 +67,7 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
   - Fix the 'edit' feature for functions; currently, it only opens a new function creator.
   - Add edit button for Test Case inside the DataGrid. Popup should open with current values
     - rename CreateTestCasePopup to more generic to be inclusive of both editing and creating
-    - have this component take in button name and curr ID of the TestCase being edited or null 
+    - have this component take in button name and curr ID of the TestCase being edited or null
 
 - [✅] **Default Functions**
 
@@ -163,11 +163,11 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
   - Split into `storage_` and `execution_` classes to improve clarity.
   - Remove dead code accumulating in the current structure.
 
-- [ ] **Serialize test results**
+- [✅] **Serialize test results**
 
   - Implement serialization of test results on the backend.
 
-- [ ] **Query existing serialized results on startup**
+- [✅] **Query existing serialized results on startup**
 
   - Create `TestCase` and `TestResult` objects from the backend response to update the state.
 
@@ -176,13 +176,17 @@ But, it was unable to fix this little visual hiccup w/ the collapse icon after b
   - ~~Investigate why the dropdown is showing duplicate scripts; not sure when this started happening.~~
   - Apparently React.StrictMode causes all components to mount twice. Kinda seems yucky. Rm'd.
 
-- [ ] **Backend to parse the result status into a failure msg**
+- [✅] **Backend to parse the result status into a failure msg**
 
   - Implement backend logic to parse result status and generate a failure message.
 
-- [ ] **Receiver output to make it to receiver output window**
+- [✅] **Receiver output to make it to receiver output window**
 
   - Ensure receiver output is correctly displayed in the receiver output window.
+
+- [ ] **Nest TableContainers in DataGrid Rows for TestCases Display**
+
+  - Each TestResult is tied to a TestCase ID but also has its own unique ID. Instead of showing every TestResult in the DataGrid, each row should show the latest test result and then a toggle to open a table underneath the row to show past TestResults (sorted from newest to old).
 
 - [ ] **Fn-selection added to Create Test Case logic**
 

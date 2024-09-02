@@ -1,56 +1,96 @@
 import os
 import threading
 import socket
+import logging
 from confluent_kafka import Producer, Consumer, KafkaError
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+
+data_mapping = {
+    '00000000000000000000111111111111111111111111': '<message>First XML Data</message>',
+    '05060708': '<message>Second XML Data</message>',
+    '090a0b0c': '<message>Third XML Data</message>',
+    # Add more mappings as needed
+}
+
+
+reverse_data_mapping = {v: k for k, v in data_mapping.items()}  # Reverse dictionary for XML to .pcapng mapping
 
 # TCP Server
 def tcp_server(host, port, kafka_producer):
+    logging.info(f"Starting TCP Server on {host}:{port}...")
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((host, port))
     server.listen(1)
-    print(f"TCP Server listening on {host}:{port}...")
 
     while True:
+        logging.info("TCP Server waiting for connection...")
         conn, addr = server.accept()
-        with open('received.pcapng', 'wb') as f:
-            while True:
-                data = conn.recv(1024)
-                if not data:
-                    break
-                f.write(data)
+        logging.debug(f"Accepted connection from {addr}")
+        received_data = b""
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+            logging.debug(f"Received data chunk (raw): {data}")
+            received_data += data
         conn.close()
-        print("Received .pcapng file")
-        kafka_producer()
+        logging.info(f"Finished receiving .pcapng data (raw): {received_data}")
+
+        # Convert received data to a string directly
+        received_data_str = received_data.decode('utf-8', errors='ignore')  # If it's UTF-8 encoded
+        logging.debug(f"Received data (str): {received_data_str}")
+
+        # Lookup corresponding XML data
+        xml_data = data_mapping.get(received_data_str, "")
+        if xml_data:
+            logging.info(f"Found corresponding XML data: {xml_data}")
+            kafka_producer(xml_data)
+        else:
+            logging.warning("No corresponding XML data found, returning empty data.")
+            kafka_producer("<Error>No matching XML for provided data on TCP connection</Error>")
+
 
 # TCP Client
-def tcp_client(host, port):
+def tcp_client(host, port, xml_data):
+    logging.debug(f"Connecting to TCP Server at {host}:{port} to send XML data...")
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client.connect((host, port))
 
-    with open('send.pcapng', 'rb') as f:
-        data = f.read(1024)
-        while data:
-            client.send(data)
-            data = f.read(1024)
+    # Lookup corresponding .pcapng data
+    pcapng_data = reverse_data_mapping.get(xml_data, b"")
+    if pcapng_data:
+        logging.debug(f"Sending corresponding .pcapng data: {pcapng_data}")
+        client.sendall(pcapng_data)
+    else:
+        logging.warning("No corresponding .pcapng data found, sending empty data.")
+        client.sendall(b"")
 
     client.close()
-    print("Sent .pcapng file")
+    logging.debug("Finished sending .pcapng data")
 
 # Kafka Producer
-def kafka_producer(kafka_host, kafka_topic):
+def kafka_producer(kafka_host, kafka_topic, xml_data):
+    logging.debug(f"Producing XML message to Kafka topic '{kafka_topic}' on {kafka_host}...")
     p = Producer({'bootstrap.servers': kafka_host})
 
     def delivery_report(err, msg):
         if err is not None:
-            print(f'Message delivery failed: {err}')
+            logging.error(f'Message delivery failed: {err}')
         else:
-            print(f'Message delivered to {msg.topic()} [{msg.partition()}]')
+            logging.debug(f'Message delivered to {msg.topic()} [{msg.partition()}]')
 
-    p.produce(kafka_topic, key='key', value='<message>Dummy XML</message>', callback=delivery_report)
+    p.produce(kafka_topic, key='key', value=xml_data, callback=delivery_report)
     p.flush()
 
 # Kafka Consumer
 def kafka_consumer(kafka_host, kafka_topic, tcp_host, tcp_port):
+    logging.debug(f"Starting Kafka Consumer for topic '{kafka_topic}' on {kafka_host}...")
     c = Consumer({
         'bootstrap.servers': kafka_host,
         'group.id': 'my-group',
@@ -58,30 +98,34 @@ def kafka_consumer(kafka_host, kafka_topic, tcp_host, tcp_port):
     })
 
     c.subscribe([kafka_topic])
-    print(f"Kafka Consumer listening to '{kafka_topic}' on {kafka_host}...")
+    logging.debug(f"Kafka Consumer subscribed to '{kafka_topic}'")
 
     while True:
-        msg = c.poll(1.0)
+        msg = c.poll(10)
         if msg is None:
             continue
         if msg.error():
             if msg.error().code() == KafkaError._PARTITION_EOF:
                 continue
             else:
-                print(msg.error())
+                logging.error(f"Kafka error: {msg.error()}")
                 break
-        print(f'Received message: {msg.value().decode("utf-8")}')
-        tcp_client(tcp_host, tcp_port)  # Trigger TCP client to send .pcapng data
+        xml_data = msg.value().decode("utf-8")
+        logging.debug(f'Received XML message: {xml_data}')
+        tcp_client(tcp_host, tcp_port, xml_data)
     c.close()
+    logging.debug("Kafka Consumer closed")
 
 # Main function to run all components
 def main():
     tcp_host = os.getenv('TCP_HOST', '0.0.0.0')
     tcp_port = int(os.getenv('TCP_PORT', 12345))
-    kafka_host = os.getenv('KAFKA_HOST', 'localhost:9092')
+    kafka_host = os.getenv('KAFKA_HOST', 'kafka:9092')
     kafka_topic = os.getenv('KAFKA_TOPIC', 'topic-name')
 
-    threading.Thread(target=tcp_server, args=(tcp_host, tcp_port, lambda: kafka_producer(kafka_host, kafka_topic))).start()
+    logging.debug("Starting the application...")
+
+    threading.Thread(target=tcp_server, args=(tcp_host, tcp_port, lambda xml_data: kafka_producer(kafka_host, kafka_topic, xml_data))).start()
     threading.Thread(target=kafka_consumer, args=(kafka_host, kafka_topic, tcp_host, tcp_port)).start()
 
 if __name__ == '__main__':

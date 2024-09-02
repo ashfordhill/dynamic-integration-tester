@@ -1,4 +1,5 @@
 {
+    "id": "79b1cf5a-2fa2-4c59-9efb-3ef5f0d76b6a",
     "function_name": "SendAndReceiveOrTimeout",
     "sender_connection": {
         "connectionType": "TCP",
@@ -12,14 +13,18 @@
         "topic": "DummyTopic"
     },
     "input_file": "fake.pcapng",
-    "output_file": "fake.xml",
+    "output_file": "New Text Document.xml",
     "output": "",
     "input": "",
     "status": "success",
-    "timestamp": "2024-09-01T04:22:54.487602",
+    "timestamp": "2024-09-02T07:50:26.641204",
     "results": {
         "result": "Fail",
-        "resultMessage": "Failed to send data via TCP: [WinError 10061] No connection could be made because the target machine actively refused it",
-        "details": {}
+        "resultMessage": "Test failed: data mismatch",
+        "details": {
+            "expected": "00000000000000000000111111111111111111111111",
+            "received": "<message>First XML Data</message>",
+            "match": "false"
+        }
     }
 }

@@ -1,0 +1,67 @@
+{
+    "function_name": "SendAndReceiveOrTimeout",
+    "id": "dc354c6d-c2df-40d6-828a-58e580f81173",
+    "input": "",
+    "input_file": "fake.pcapng",
+    "output": "",
+    "output_file": "New Text Document.xml",
+    "receiver_connection": {
+        "connectionType": "Kafka",
+        "host": "host.docker.internal",
+        "port": 9093,
+        "topic": "DummyTopic"
+    },
+    "results": {
+        "details": {
+            "expected": "00000000000000000000111111111111111111111111",
+            "match": "true",
+            "received": "<message>First XML Data</message>"
+        },
+        "result": "Pass",
+        "resultMessage": "User accepted receiver output as success test case."
+    },
+    "sender_connection": {
+        "connectionType": "TCP",
+        "host": "127.0.0.1",
+        "port": 12345
+    },
+    "status": "success",
+    "timestamp": "2024-09-02T07:52:18.775668",
+    "testCaseId": "dc354c6d-c2df-40d6-828a-58e580f81173",
+    "result": "Fail",
+    "resultMessage": "Test failed: data mismatch",
+    "receiverOutput": "<message>First XML Data</message>",
+    "rawData": {
+        "function_name": "SendAndReceiveOrTimeout",
+        "id": "b49e8dd3-ff22-4480-89ae-f602c79faf24",
+        "input": "",
+        "input_file": "fake.pcapng",
+        "output": "",
+        "output_file": "New Text Document.xml",
+        "receiver_connection": {
+            "connectionType": "Kafka",
+            "host": "host.docker.internal",
+            "port": 9093,
+            "topic": "DummyTopic"
+        },
+        "results": {
+            "details": {
+                "expected": "00000000000000000000111111111111111111111111",
+                "match": "false",
+                "received": "<message>First XML Data</message>"
+            },
+            "result": "Fail",
+            "resultMessage": "Test failed: data mismatch"
+        },
+        "sender_connection": {
+            "connectionType": "TCP",
+            "host": "127.0.0.1",
+            "port": 12345
+        },
+        "status": "success",
+        "timestamp": "2024-09-02T07:52:18.775668"
+    },
+    "inputFileName": "fake.pcapng",
+    "outputFileName": "New Text Document.xml",
+    "functionName": "SendAndReceiveOrTimeout"
+}

@@ -50,7 +50,7 @@ def receive_data_via_kafka(connection_details, result_queue):
     logging.error(f"Setting up Kafka consumer for topic {connection_details['topic']} on {connection_details['host']}")
     try:
         c = Consumer({
-            'bootstrap.servers': connection_details['host'],
+            'bootstrap.servers': f"{connection_details['host']}:{connection_details['port']}",
             'group.id': 'my-super-special-group',
             'auto.offset.reset': 'earliest'
         })
@@ -59,11 +59,11 @@ def receive_data_via_kafka(connection_details, result_queue):
         logging.error("Kafka consumer subscribed and polling for messages")
 
         start_time = time.time()
-        timeout = 5  # Timeout after 5 seconds
+        timeout = 30  # Increase timeout to 30 seconds
 
         while True:
             if time.time() - start_time > timeout:
-                error_message = "Kafka polling timed out after 5 seconds"
+                error_message = "Kafka polling timed out after 30 seconds"
                 logging.error(error_message)
                 result_queue.put({"status": "failure", "error": error_message})
                 c.close()
@@ -113,14 +113,15 @@ def execute_test(connection_sender, connection_receiver, input_file, output_file
     try:
         with open(input_file, 'r') as file:
             input_data = file.read()
-            logging.error(f"Loaded input data from {input_file}")
+            logging.debug(f"Loaded input data from {input_file}")
 
         # Start Kafka consumer first if receiving via Kafka
         received_data = None
+
         result_queue = Queue()
 
         if connection_receiver['connectionType'] == 'Kafka':
-            logging.error("Starting Kafka consumer thread")
+            logging.debug("Starting Kafka consumer thread")
             receive_thread = threading.Thread(target=receive_data_via_kafka, args=(connection_receiver, result_queue))
             receive_thread.start()
 
@@ -142,15 +143,15 @@ def execute_test(connection_sender, connection_receiver, input_file, output_file
         if connection_receiver['connectionType'] == 'TCP':
             receive_result = receive_data_via_tcp(connection_receiver)
         else:
-            logging.error("Waiting for Kafka consumer thread to finish")
+            logging.debug("Waiting for Kafka consumer thread to finish")
             receive_thread.join()  # Wait for the Kafka consumer thread to finish
 
-            logging.error("Retrieving result from result queue")
+            logging.debug("Retrieving result from result queue")
             receive_result = result_queue.get()  # Get the result from the queue
-            logging.error(f"Received result from Kafka: {receive_result}")
+            logging.debug(f"Received result from Kafka: {receive_result}")
 
         # Explicitly log the receive result
-        logging.error(f"Receive result after join/get: {receive_result}")
+        logging.debug(f"Receive result after join/get: {receive_result}")
 
         if receive_result["status"] == "failure":
             logging.error(f"Test failed during receive: {receive_result['error']}")
@@ -159,13 +160,20 @@ def execute_test(connection_sender, connection_receiver, input_file, output_file
             return result  # Return failure result if receiving data failed
 
         # Compare received data with expected data
-        match = (input_data == receive_result.get("data", ""))
+        logging.debug(f"Input data: {input_data}")
+        logging.debug(f"Receive result data: {receive_result.get("data", "")}")
+
+        with open(output_file, 'r') as file:
+            expected_output = file.read()
+            logging.debug(f"Loaded expected output data: {expected_output}")
+        
+        match = (expected_output == receive_result.get("data", ""))
         result_status = "Pass" if match else "Fail"
 
         # Save the received data to the output file if specified
         if received_data:
             output_file = output_file.replace('.xml', '.json')
-            logging.error(f"Writing received data to {output_file}")
+            logging.debug(f"Writing received data to {output_file}")
             with open(output_file, 'w') as file:
                 file.write(json.dumps(received_data, indent=4))
 
@@ -187,7 +195,7 @@ def execute_test(connection_sender, connection_receiver, input_file, output_file
             "details": {}
         }
     finally:
-        logging.error("Test execution completed, outputting results.")
+        logging.debug("Test execution completed, outputting results.")
         print("START_JSON_OUTPUT")
         print(json.dumps(result))
         print("END_JSON_OUTPUT")

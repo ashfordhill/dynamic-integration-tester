@@ -13,13 +13,9 @@ import {
 } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { addTestCase } from '../../store/testCaseSlice'
-import { styled } from '@mui/system'
 import { selectFunctionNames } from '../../store/functionSlice'
 import { v4 as uuidv4 } from 'uuid'
-const StyledButton = styled(Button)(({ theme }) => ({
-  width: 'auto', // Ensures the button doesn't take up too much space
-  alignSelf: 'flex-end' // Aligns the button to the right
-}))
+import axios from 'axios'
 
 export const CreateTestCasePopup: React.FC = () => {
   const [open, setOpen] = useState(false)
@@ -31,18 +27,34 @@ export const CreateTestCasePopup: React.FC = () => {
 
   const handleCreate = () => {
     if (inputFile && selectedFunction) {
-      dispatch(
-        addTestCase({
-          id: uuidv4(),
-          inputFileName: inputFile.name,
-          outputFileName: outputFile?.name || null,
-          functionName: selectedFunction // Include the selected function
+      const formData = new FormData()
+      formData.append('inputFile', inputFile)
+      if (outputFile) {
+        formData.append('outputFile', outputFile)
+      }
+      formData.append('functionName', selectedFunction)
+
+      // Make an API call to upload the files and create the test case
+      axios
+        .post('/api/upload-test-case-resources', formData)
+        .then((response) => {
+          dispatch(
+            addTestCase({
+              id: response.data.testCaseId, // Returned from the backend
+              inputFileName: response.data.inputFileName,
+              outputFileName: response.data.outputFileName || null,
+              functionName: selectedFunction
+            })
+          )
+          setOpen(false)
+          setInputFile(null)
+          setOutputFile(null)
+          setSelectedFunction('')
         })
-      )
-      setOpen(false)
-      setInputFile(null)
-      setOutputFile(null)
-      setSelectedFunction('')
+        .catch((error) => {
+          console.error('Error uploading test case:', error)
+          // Handle error appropriately
+        })
     } else {
       // Handle error - input file and function are required
     }
