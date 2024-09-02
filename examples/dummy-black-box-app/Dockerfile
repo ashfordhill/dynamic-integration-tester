@@ -4,12 +4,12 @@ FROM python:3.9-slim
 # Install Kafka Python client
 RUN pip install confluent-kafka
 
-# Copy the combined application
-COPY main.py /app/main.py
 WORKDIR /app
 
-# Expose TCP port
+COPY main.py .
+COPY wait-for-it.sh .
+RUN chmod +x wait-for-it.sh
+
 EXPOSE 12345
 
-# Use CMD to pass environment variables at runtime
-CMD ["python", "main.py", "--tcp-host", "${TCP_HOST}", "--tcp-port", "${TCP_PORT}", "--kafka-host", "${KAFKA_HOST}", "--kafka-topic", "${KAFKA_TOPIC}"]
+CMD ["/app/wait-for-it.sh", "kafka:9092", "--timeout=60", "--strict", "--", "python", "/app/main.py", "--tcp-host", "${TCP_HOST}", "--tcp-port", "${TCP_PORT}", "--kafka-host", "${KAFKA_HOST}", "--kafka-topic", "${KAFKA_TOPIC}"]

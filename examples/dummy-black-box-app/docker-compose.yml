@@ -16,6 +16,7 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka:9092,EXTERNAL://host.docker.internal:9093
       - KAFKA_LISTENERS=INTERNAL://0.0.0.0:9092,EXTERNAL://0.0.0.0:9093
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true  # Enable auto-creation of topics
       - ALLOW_PLAINTEXT_LISTENER=yes
     ports:
       - '9092:9092'

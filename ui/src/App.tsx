@@ -1,4 +1,4 @@
-import { CssBaseline, Grid } from '@mui/material'
+import { CssBaseline } from '@mui/material'
 import { useState } from 'react'
 import { styled } from '@mui/system'
 import { LeftPanel } from './grid/LeftPanel'
@@ -28,7 +28,7 @@ const MiddleContent = styled('div', {
   flexGrow: 1,
   overflow: 'auto',
   position: 'relative',
-  paddingTop: '16px', // Add padding to move the MiddlePanel down
+  paddingTop: '16px' // Add padding to move the MiddlePanel down
 }))
 
 export const App = () => {

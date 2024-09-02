@@ -1,4 +1,4 @@
-import { Grid, IconButton, Box, Typography, Button } from '@mui/material'
+import { Grid, IconButton } from '@mui/material'
 import { ConnectionSettings } from './connections/ConnectionSettings'
 import {
   selectReceiverConnection,
@@ -7,7 +7,7 @@ import {
   setSenderConnection
 } from '../store/connectionSlice'
 import TestCaseGrid from './tests/TestCaseGrid'
-import ReceiverOutputWindow from './connections/ReceiverOutputWindow'
+import ReceiverOutputWindow from './tests/ReceiverOutputWindow'
 import { SwapHoriz } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
 

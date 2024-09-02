@@ -1,11 +1,20 @@
-import React, { useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Box, Button, Typography, TextareaAutosize } from '@mui/material'
+import {
+  saveTestResult,
+  selectLastExecuteTestResultId,
+  selectReceiverOutputWindow
+} from '../../store/testCaseSlice'
+import { AppDispatch } from '../../store/store'
 
-const ReceiverOutputWindow: React.FC = () => {
-  const [output, setOutput] = useState('')
+const ReceiverOutputWindow = () => {
+  const dispatch = useDispatch<AppDispatch>()
+  const lastExecutedTestResultId = useSelector(selectLastExecuteTestResultId) || ''
+  const receiverOutput = useSelector(selectReceiverOutputWindow)
 
   const handleSaveOutput = () => {
-    // Logic to save output as a file
+    // Dispatch action to save the test result
+    dispatch(saveTestResult(lastExecutedTestResultId))
   }
 
   return (
@@ -15,9 +24,9 @@ const ReceiverOutputWindow: React.FC = () => {
       </Box>
       <Box>
         <TextareaAutosize
-          value={output}
-          onChange={(e) => setOutput(e.target.value)}
+          value={receiverOutput}
           minRows={4}
+          disabled={true}
           placeholder='Receiver Connection Output...'
           style={{
             width: '100%',
@@ -32,7 +41,7 @@ const ReceiverOutputWindow: React.FC = () => {
         />
       </Box>
       <Box display='flex' justifyContent='flex-end' mt={2}>
-        <Button onClick={handleSaveOutput} variant='contained'>
+        <Button onClick={handleSaveOutput} variant='contained' disabled={!receiverOutput}>
           Save as Expected Output
         </Button>
       </Box>
