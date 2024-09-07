@@ -33,7 +33,7 @@ const MiddleContent = styled('div', {
 
 export const App = () => {
   const [leftDrawerOpen, setLeftDrawerOpen] = useState(true)
-  const [rightDrawerOpen, setRightDrawerOpen] = useState(true)
+  const [rightDrawerOpen, setRightDrawerOpen] = useState(false)
 
   return (
     <>
