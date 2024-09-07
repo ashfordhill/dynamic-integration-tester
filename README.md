@@ -24,38 +24,6 @@
 
 This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that every push to Github will result in `./ui/screenshot.png` getting regenerated from the latest build.
 
-## Fun ChatGPT Findings
-
-### FunctionEditor visual improvements
-
-I sent screenshots of the `FunctionEditor.tsx` component to ChatGPT, along with the src code of that component and it sent me back code with some visual improvements:
-
-- **Before:**
-  ![Before UI Improvements](resources/chat-gpt-editor-before.png)
-- **After:**
-  ![After UI Improvements](resources/chat-gpt-editor-after.png)
-
-It could still be better but it's pretty cool that it knew to:
-
-- add label on Textfield
-- make the box wider for coding purposes
-- space the buttons evenly.
-
-**I only asked it to 'make this look better'.**
-
-### Layout half-win
-
-This is a good example of when manual dev work is required.
-Described the goal of the application and asked for suggestions via screenshots.
-It was useful that gpt utilized Drawers to make my single-page layout less clunky.
-
-But, it was unable to fix this little visual hiccup w/ the collapse icon after being asked repeatedly:
-
-- **Expanded Left Drawer:**
-  ![Before UI Improvements](resources/chat-gpt-drawer-layout-expanded.png)
-- **Collapsed Left Drawer:**
-  ![After UI Improvements](resources/chat-gpt-drawer-layout-collapsed.png)
-
 ## TODO List
 
 - [✅] **Create Checklist**
