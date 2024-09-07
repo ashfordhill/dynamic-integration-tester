@@ -15,5 +15,5 @@ export interface ConnectionState {
 
 export const initialState: ConnectionState = {
   senderConnection: { connectionType: 'TCP', host: '127.0.0.1', port: 12345 },
-  receiverConnection: { connectionType: 'Kafka', host: 'host.docker.internal', port: 9093, topic: 'DummyTopic' }
+  receiverConnection: { connectionType: 'Kafka', host: '127.0.0.1', port: 9094, topic: 'DummyTopic' }
 }

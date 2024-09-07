@@ -1,5 +1,5 @@
 {
-    "id": "79b1cf5a-2fa2-4c59-9efb-3ef5f0d76b6a",
+    "id": "b78c84ec-2525-4256-84a1-8766743bd833",
     "function_name": "SendAndReceiveOrTimeout",
     "sender_connection": {
         "connectionType": "TCP",
@@ -12,19 +12,15 @@
         "port": 9093,
         "topic": "DummyTopic"
     },
-    "input_file": "fake.pcapng",
-    "output_file": "New Text Document.xml",
+    "input_file": "cmd1.pcapng",
+    "output_file": "status1.xml",
     "output": "",
     "input": "",
     "status": "success",
-    "timestamp": "2024-09-02T07:50:26.641204",
+    "timestamp": "2024-09-07T19:59:44.955507",
     "results": {
         "result": "Fail",
-        "resultMessage": "Test failed: data mismatch",
-        "details": {
-            "expected": "00000000000000000000111111111111111111111111",
-            "received": "<message>First XML Data</message>",
-            "match": "false"
-        }
+        "resultMessage": "Kafka polling timed out after 30 seconds",
+        "details": {}
     }
 }

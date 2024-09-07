@@ -1,43 +1,29 @@
+import axios from 'axios'
 import { setContainers } from '../store/dockerSlice'
-import yaml from 'js-yaml'
+import { Container } from '../types/docker'
 
-interface DockerComposeService {
-  name: string
-  image: string
-  ports: string[]
-  environment: string[]
-  volumes: string[]
-  network: string
-  id: string // Add this line for a unique ID
-  running: boolean
-}
-
-export const importDockerCompose = (composeFile: string, dispatch: any) => {
+export const importDockerCompose = async (composeContent: string, dispatch: any) => {
   try {
-    const composeData = yaml.load(composeFile) as any
+    const formData = new FormData()
+    formData.append('file', new Blob([composeContent], { type: 'text/yaml' }))
 
-    if (!composeData || !composeData.services) {
-      throw new Error('Invalid Docker Compose file.')
+    const response = await axios.post('/api/docker/upload-compose', formData)
+
+    if (response.status === 200) {
+      const services: any[] = response.data.compose.services
+      const containers = Object.entries(services).map(([key, service]) => {
+        const container: Container = {
+          name: key,
+          environment: service.environment,
+          ports: service.ports,
+          logs: '',
+          running: false
+        }
+        return container
+      })
+      dispatch(setContainers(containers))
     }
-
-    const containers: DockerComposeService[] = Object.keys(composeData.services).map((serviceName) => {
-      const service = composeData.services[serviceName]
-      return {
-        id: `${serviceName}-${new Date().getTime()}`, // Create a unique ID
-        name: serviceName,
-        image: service.image,
-        ports: service.ports || [],
-        environment: service.environment || [],
-        volumes: service.volumes || [],
-        network: service.network || 'default',
-        running: false // Initialize as not running
-      } as DockerComposeService
-    })
-
-    // Dispatch the containers to the store
-    dispatch(setContainers(containers))
   } catch (error) {
-    console.error('Error importing Docker Compose file:', error)
-    alert('Failed to import Docker Compose file.')
+    console.error('Error uploading docker-compose file:', error)
   }
 }

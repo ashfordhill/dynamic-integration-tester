@@ -15,7 +15,7 @@ export const RemoveContainerDialog: React.FC<RemoveContainerDialogProps> = ({ op
 
   const handleRemove = () => {
     if (selectedContainer) {
-      dispatch(removeContainer(selectedContainer.name))
+      //dispatch(removeContainer(selectedContainer.name))
       onClose()
     }
   }

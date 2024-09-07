@@ -19,51 +19,91 @@ def get_container_statuses():
         logging.error(error_message)
         return jsonify({"error": error_message}), 500
 
-@docker_app.route('/api/docker/start-containers', methods=['POST'])
-def start_containers():
-    containers = request.json.get('containers', [])
+# Upload and serialize docker-compose file
+@docker_app.route('/api/docker/upload-compose', methods=['POST'])
+def upload_compose():
     try:
-        result = docker_service.start_all_containers(containers)
-        return jsonify({"status": "success", "output": result["output"], "statuses": result["statuses"]}), 200
-    except Exception as e:
-        error_message = f"Error starting containers: {str(e)}"
-        logging.error(error_message)
-        return jsonify({"error": error_message}), 500
+        # Get the uploaded file
+        compose_file = request.files['file']
+        
+        # Use a known temp directory to avoid issues
+        temp_dir = tempfile.mkdtemp()
+        compose_file_path = os.path.join(temp_dir, 'docker-compose.yml')
 
-@docker_app.route('/api/docker/stop-containers', methods=['POST'])
-def stop_containers():
-    containers = request.json.get('containers', [])
-    try:
-        output = docker_service.stop_all_containers(containers)
-        return jsonify({"status": "success", "output": output}), 200
-    except Exception as e:
-        error_message = f"Error stopping containers: {str(e)}"
-        logging.error(error_message)
-        return jsonify({"error": error_message}), 500
+        # Save the uploaded file
+        compose_file.save(compose_file_path)
 
-@docker_app.route('/api/docker/export-compose', methods=['POST'])
-def export_compose():
-    containers = request.json['containers']
-    try:
-        compose_content = docker_service.generate_compose_file(containers)
-        with open('docker-compose.yml', 'w') as file:
-            file.write(compose_content)
-        return jsonify({"status": "success", "message": "docker-compose.yml saved successfully."}), 200
+        # Read and parse the compose file
+        with open(compose_file_path, 'r') as f:
+            file_content = f.read()
+
+        compose_data = docker_service.parse_compose(file_content, compose_file_path)
+        return jsonify({"status": "success", "compose": compose_data}), 200
     except Exception as e:
+        logging.error(f"Error parsing docker-compose file: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
-@docker_app.route('/import-compose', methods=['POST'])
-def import_compose():
-    if 'file' not in request.files:
-        return jsonify({"error": "No file provided"}), 400
-
-    file = request.files['file']
-    file_path = os.path.join('/tmp', file.filename)
-
+# Edit the docker-compose fields
+@docker_app.route('/api/docker/edit-compose', methods=['POST'])
+def edit_compose():
     try:
-        file.save(file_path)
-        containers = docker_service.import_docker_compose(file_path)
-        return jsonify(containers)
+        new_compose_data = request.json  # The updated compose data from UI
+        updated_compose = docker_service.update_compose(new_compose_data)
+        return jsonify({"status": "success", "updated_compose": updated_compose}), 200
     except Exception as e:
-        logging.error(f"Error importing Docker Compose file: {str(e)}")
-        return jsonify({"error": "Failed to import Docker Compose file"}), 500
+        logging.error(f"Error updating docker-compose: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Export the current docker-compose file
+@docker_app.route('/api/docker/export-compose', methods=['GET'])
+def export_compose():
+    try:
+        compose_data = docker_service.get_current_compose()  # Get current compose
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.yml')
+        with open(temp_file.name, 'w') as f:
+            f.write(compose_data)
+
+        return send_file(temp_file.name, as_attachment=True, download_name='docker-compose.yml')
+    except Exception as e:
+        logging.error(f"Error exporting docker-compose: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Run docker-compose file
+@docker_app.route('/api/docker/run-compose', methods=['POST'])
+def run_compose():
+    try:
+        container_details = docker_service.run_compose()
+        return jsonify({"status": "success", "containers": container_details}), 200
+    except Exception as e:
+        logging.error(f"Error running docker-compose: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Stop a running container
+@docker_app.route('/api/docker/stop-container/<string:container_id>', methods=['POST'])
+def stop_container(container_id):
+    try:
+        docker_service.stop_container(container_id)
+        return jsonify({"status": "success", "message": f"Container {container_id} stopped"}), 200
+    except Exception as e:
+        logging.error(f"Error stopping container {container_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Start all containers from the compose file and return the container details
+@docker_app.route('/api/docker/start-containers', methods=['POST'])
+def start_containers():
+    try:
+        container_details = docker_service.start_compose()  # Get container details after starting
+        return jsonify({"status": "success", "containers": container_details}), 200
+    except Exception as e:
+        logging.error(f"Error starting containers: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+# Fetch container logs
+@docker_app.route('/api/docker/container-logs/<string:container_id>', methods=['GET'])
+def container_logs(container_id):
+    try:
+        logs = docker_service.get_container_logs(container_id)
+        return jsonify({"status": "success", "logs": logs}), 200
+    except Exception as e:
+        logging.error(f"Error fetching logs for container {container_id}: {str(e)}")
+        return jsonify({"error": str(e)}), 500

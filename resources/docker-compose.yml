@@ -25,14 +25,14 @@ services:
       - zookeeper
 
   dummy-black-box-service:
-    build: ./main
+    image: dummy-black-box-service:latest
     ports:
       - "12345:12345"
     environment:
       TCP_HOST: "0.0.0.0"
       TCP_PORT: "12345"
       KAFKA_HOST: "kafka:9092"
-      KAFKA_TOPIC: "my-topic"
+      KAFKA_TOPIC: "DummyTopic"
     depends_on:
       - kafka
       - zookeeper

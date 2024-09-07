@@ -8,7 +8,9 @@ WORKDIR /app
 
 COPY main.py .
 COPY wait-for-it.sh .
-RUN chmod +x wait-for-it.sh
+
+# Convert Windows line endings (CRLF) to Unix line endings (LF) and make the script executable
+RUN sed -i 's/\r$//' wait-for-it.sh && chmod +x wait-for-it.sh
 
 EXPOSE 12345
 

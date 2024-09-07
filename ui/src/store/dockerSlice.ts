@@ -17,10 +17,10 @@ const dockerSlice = createSlice({
     removeContainer: (state, action: PayloadAction<string>) => {
       state.containers = state.containers.filter((container) => container.id !== action.payload)
     },
-    updateContainer: (state, action: PayloadAction<Container>) => {
-      const index = state.containers.findIndex((container) => container.id === action.payload.id)
+    updateContainer: (state, action: PayloadAction<Partial<Container>>) => {
+      const index = state.containers.findIndex((container) => container.name === action.payload.name)
       if (index !== -1) {
-        state.containers[index] = action.payload
+        state.containers[index] = {...state.containers[index], ...action.payload }
       }
     },
     updateContainerStatus: (state, action: PayloadAction<{ id: string; running: boolean }>) => {
@@ -34,6 +34,15 @@ const dockerSlice = createSlice({
     },
     setDockerOutput: (state, action: PayloadAction<string>) => {
       state.dockerOutput = action.payload
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.loading = action.payload
+    },
+    setContainerLogs: (state, action: PayloadAction<{ id: string; logs: string }>) => {
+      const container = state.containers.find((container) => container.id === action.payload.id)
+      if (container) {
+        container.logs = action.payload.logs
+      }
     }
   }
 })
@@ -45,9 +54,14 @@ export const {
   updateContainer,
   updateContainerStatus,
   selectContainer,
-  setDockerOutput
+  setDockerOutput,
+  setLoading,
+  setContainerLogs
 } = dockerSlice.actions
 
 export const selectContainers = (state: RootState) => state[dockerSliceName].containers
+export const selectSelectedContainer = (state: RootState) => state[dockerSliceName].selectedContainer
 export const selectDockerOutput = (state: RootState) => state[dockerSliceName].dockerOutput
+export const selectLoading = (state: RootState) => state[dockerSliceName].loading
+
 export default dockerSlice.reducer

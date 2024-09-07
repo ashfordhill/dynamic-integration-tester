@@ -46,22 +46,22 @@ export const ContainerSettingsDialog: React.FC<ContainerSettingsDialogProps> = (
           fullWidth
           margin='normal'
         />
-        <TextField
+        {/* <TextField
           label='Environment Variables'
           name='environment'
           value={localContainer.environment.join(',')}
           onChange={handleChange}
           fullWidth
           margin='normal'
-        />
-        <TextField
+        /> */}
+        {/* <TextField
           label='Volumes'
           name='volumes'
           value={localContainer.volumes.join(',')}
           onChange={handleChange}
           fullWidth
           margin='normal'
-        />
+        /> */}
         <TextField
           label='Network'
           name='network'

@@ -4,7 +4,7 @@ import { UserUploadYaml } from './docker/UserUploadYaml'
 import { ContainerTable } from './docker/ContainerTable'
 import { ActionButtons } from './docker/ActionButtons'
 import DockerControls from './docker/DockerControls'
-import { DockerConsoleWindow } from './docker/DockerConsoleWindow'
+import { DockerOutputWindow } from './docker/DockerOutputWindow'
 
 const drawerWidthLeft = 300
 
@@ -29,7 +29,7 @@ export const LeftPanel = ({ open }: LeftPanelProps) => {
       <ContainerTable />
       <ActionButtons />
       <DockerControls />
-      <DockerConsoleWindow />
+      <DockerOutputWindow />
     </StyledDrawerLeft>
   )
 }

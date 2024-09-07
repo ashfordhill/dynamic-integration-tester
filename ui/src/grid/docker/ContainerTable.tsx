@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import { selectContainers } from '../../store/dockerSlice'
 
 export const ContainerTable: React.FC = () => {
-  const containers = useSelector(selectContainers)
+  const containers = useSelector(selectContainers) || [] // Default to empty array
 
   return (
     <Table>

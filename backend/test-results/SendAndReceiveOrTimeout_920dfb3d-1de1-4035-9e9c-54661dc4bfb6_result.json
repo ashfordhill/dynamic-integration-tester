@@ -1,5 +1,5 @@
 {
-    "id": "4d7bad7c-9fe9-4aa6-a2ef-18c2632a1703",
+    "id": "920dfb3d-1de1-4035-9e9c-54661dc4bfb6",
     "function_name": "SendAndReceiveOrTimeout",
     "sender_connection": {
         "connectionType": "TCP",
@@ -12,19 +12,15 @@
         "port": 9093,
         "topic": "DummyTopic"
     },
-    "input_file": "fake.pcapng",
-    "output_file": "New Text Document.xml",
+    "input_file": "cmd1.pcapng",
+    "output_file": "status1.xml",
     "output": "",
     "input": "",
     "status": "success",
-    "timestamp": "2024-09-02T07:28:34.706238",
+    "timestamp": "2024-09-07T19:18:46.003506",
     "results": {
         "result": "Fail",
-        "resultMessage": "Test failed: data mismatch",
-        "details": {
-            "expected": "00000000000000000000111111111111111111111111",
-            "received": "<message>First XML Data</message>",
-            "match": "false"
-        }
+        "resultMessage": "Kafka error: KafkaError{code=UNKNOWN_TOPIC_OR_PART,val=3,str=\"Subscribed topic not available: DummyTopic: Broker: Unknown topic or partition\"}",
+        "details": {}
     }
 }

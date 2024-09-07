@@ -34,10 +34,11 @@ export const AddContainerDialog: React.FC<AddContainerDialogProps> = ({ open, on
         name: container.name,
         image: container.image,
         ports: container.ports.split(',').map((item) => item.trim()),
-        environment: container.environment.split(',').map((item) => item.trim()),
+        environment: {},
         volumes: container.volumes.split(',').map((item) => item.trim()),
         network: container.network,
-        running: false // Initialize as not running
+        running: false, // Initialize as not running
+        logs: ''
       })
     )
     onClose()

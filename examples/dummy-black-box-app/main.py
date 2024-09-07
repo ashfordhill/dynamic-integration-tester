@@ -6,15 +6,18 @@ from confluent_kafka import Producer, Consumer, KafkaError
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s [%(levelname)s] %(message)s',
     handlers=[logging.StreamHandler()]
 )
 
+# Stubs out real app logic.
+# Receive .pcapng? lookup key to value to sent on the outgoing connection
+# Receive .xml? reverse lookup here and send key to outgoing connection
 data_mapping = {
-    '00000000000000000000111111111111111111111111': '<message>First XML Data</message>',
-    '05060708': '<message>Second XML Data</message>',
-    '090a0b0c': '<message>Third XML Data</message>',
+    '01000000': '<CmdStatus>Status 1</CmdStatus>',
+    '05060708': '<CmdStatus>Status 2</CmdStatus>',
+    '090a0b0c': '<CmdStatus>Status 3</CmdStatus>',
     # Add more mappings as needed
 }
 
@@ -93,26 +96,34 @@ def kafka_consumer(kafka_host, kafka_topic, tcp_host, tcp_port):
     logging.debug(f"Starting Kafka Consumer for topic '{kafka_topic}' on {kafka_host}...")
     c = Consumer({
         'bootstrap.servers': kafka_host,
-        'group.id': 'my-group',
+        'group.id': 'dummy-app-kafka-consumer-group-id',
         'auto.offset.reset': 'earliest'
     })
 
-    c.subscribe([kafka_topic])
-    logging.debug(f"Kafka Consumer subscribed to '{kafka_topic}'")
+    # Retry logic to wait for topic to become available
+    while True:
+        try:
+            c.subscribe([kafka_topic])
+            logging.debug(f"Kafka Consumer subscribed to '{kafka_topic}'")
+            break
+        except KafkaError as e:
+            logging.error(f"Kafka subscription error: {e}")
+            logging.debug("Retrying in 5 seconds...")
+            time.sleep(5)
 
     while True:
         msg = c.poll(10)
         if msg is None:
+            logging.info(f"No message received on {kafka_topic} yet. Awaiting..")
             continue
         if msg.error():
-            if msg.error().code() == KafkaError._PARTITION_EOF:
-                continue
-            else:
-                logging.error(f"Kafka error: {msg.error()}")
-                break
+            logging.error(f"Kafka error: {msg.error()}")
+            continue
         xml_data = msg.value().decode("utf-8")
         logging.debug(f'Received XML message: {xml_data}')
         tcp_client(tcp_host, tcp_port, xml_data)
+        break
+    
     c.close()
     logging.debug("Kafka Consumer closed")
 

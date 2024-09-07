@@ -1,28 +1,35 @@
-import { Box, Input } from '@mui/material'
+import { Box, Button, Input, CircularProgress } from '@mui/material'
 import { importDockerCompose } from '../../utils/importDockerCompose'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { setLoading, selectLoading } from '../../store/dockerSlice'
 
 export const UserUploadYaml = () => {
   const dispatch = useDispatch()
+  const loading = useSelector(selectLoading)
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (file) {
       readFileContent(file)
     }
   }
-  const readFileContent = (file: File) => {
+
+  const readFileContent = async (file: File) => {
     const reader = new FileReader()
-    reader.onload = () => {
+    dispatch(setLoading(true))
+    reader.onload = async () => {
       if (reader.result) {
-        importDockerCompose(reader.result as string, dispatch)
+        await importDockerCompose(reader.result as string, dispatch)
+        dispatch(setLoading(false))
       }
     }
     reader.readAsText(file)
   }
 
   return (
-    <Box mt={4}>
-      <Input type='file' inputProps={{ accept: '.yaml,.yml' }} onChange={handleFileChange} />
+    <Box mt={4} display="flex" flexDirection="column" alignItems="center">
+      <Input type="file" inputProps={{ accept: '.yaml,.yml' }} onChange={handleFileChange} disabled={loading} />
+      {loading && <CircularProgress />}
     </Box>
   )
 }

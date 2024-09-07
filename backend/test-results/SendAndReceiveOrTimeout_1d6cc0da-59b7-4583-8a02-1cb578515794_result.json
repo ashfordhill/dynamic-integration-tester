@@ -1,0 +1,26 @@
+{
+    "id": "1d6cc0da-59b7-4583-8a02-1cb578515794",
+    "function_name": "SendAndReceiveOrTimeout",
+    "sender_connection": {
+        "connectionType": "TCP",
+        "host": "127.0.0.1",
+        "port": 12345
+    },
+    "receiver_connection": {
+        "connectionType": "Kafka",
+        "host": "host.docker.internal",
+        "port": 9093,
+        "topic": "DummyTopic"
+    },
+    "input_file": "cmd1.pcapng",
+    "output_file": "status1.xml",
+    "output": "",
+    "input": "",
+    "status": "success",
+    "timestamp": "2024-09-07T20:00:18.245557",
+    "results": {
+        "result": "Fail",
+        "resultMessage": "Kafka polling timed out after 30 seconds",
+        "details": {}
+    }
+}
