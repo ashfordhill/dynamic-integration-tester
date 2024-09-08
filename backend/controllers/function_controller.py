@@ -9,7 +9,7 @@ import uuid  # Import the uuid module
 function_app = Blueprint('function_app', __name__)
 function_service = FunctionService()
 UPLOADS_DIRECTORY = os.path.join(os.getcwd(), 'uploads')
-TEST_CASE_IDS_FILE = os.path.join(os.getcwd(), 'test-cases', 'test_case_ids.json')  # Define the file to store test case IDs
+TEST_CASE_IDS_FILE = os.path.join(os.getcwd(), 'uploads', 'test_case_ids.json')  # Define the file to store test case IDs
 
 # Ensure uploads directories exist
 os.makedirs(os.path.join(UPLOADS_DIRECTORY, 'inputs'), exist_ok=True)
@@ -83,16 +83,16 @@ def execute_test():
 def list_test_results():
     try:
         test_results_dir = os.path.join(os.getcwd(), 'test-results')
-        logging.error(f"Looking for JSON files in {test_results_dir}")  # Log directory path
+        logging.debug(f"Looking for JSON files in {test_results_dir}")  # Log directory path
 
         json_files = glob.glob(os.path.join(test_results_dir, "*.json"))
-        logging.error(f"Found JSON files: {json_files}")  # Log found files
+        logging.debug(f"Found JSON files: {json_files}")  # Log found files
 
         test_results = []
         for json_file in json_files:
             with open(json_file, 'r') as file:
                 data = json.load(file)
-                logging.error(f"Loaded data from {json_file}: {data}")  # Log loaded data
+                logging.debug(f"Loaded data from {json_file}: {data}")  # Log loaded data
                 test_results.append(data)
 
         return jsonify(test_results), 200

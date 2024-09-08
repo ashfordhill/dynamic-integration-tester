@@ -1,0 +1,27 @@
+{
+    "id": "3389c551-5069-47a3-8379-b83ae519679e",
+    "test_case_id": "bf04c774-ab4e-4c62-9a86-bbc67bb5af34",
+    "function_name": "SendAndReceiveOrTimeout",
+    "sender_connection": {
+        "connectionType": "TCP",
+        "host": "127.0.0.1",
+        "port": 12345
+    },
+    "receiver_connection": {
+        "connectionType": "Kafka",
+        "host": "127.0.0.1",
+        "port": 9094,
+        "topic": "DummyTopic"
+    },
+    "input_file": "cmd2.pcapng",
+    "output_file": "status2.xml",
+    "output": "",
+    "input": "",
+    "status": "success",
+    "timestamp": "2024-09-08T06:01:10.784414",
+    "results": {
+        "result": "Fail",
+        "resultMessage": "Kafka error: KafkaError{code=UNKNOWN_TOPIC_OR_PART,val=3,str=\"Subscribed topic not available: DummyTopic: Broker: Unknown topic or partition\"}",
+        "details": {}
+    }
+}

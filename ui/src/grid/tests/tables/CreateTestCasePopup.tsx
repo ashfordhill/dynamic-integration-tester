@@ -12,8 +12,8 @@ import {
   InputLabel
 } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
-import { addTestCase } from '../../store/testCaseSlice'
-import { selectFunctionNames } from '../../store/functionSlice'
+import { addTestCase } from '../../../store/testCaseSlice'
+import { selectFunctionNames } from '../../../store/functionSlice'
 import { v4 as uuidv4 } from 'uuid'
 import axios from 'axios'
 

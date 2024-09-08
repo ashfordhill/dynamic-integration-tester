@@ -97,7 +97,7 @@ def kafka_consumer(kafka_host, kafka_topic, tcp_host, tcp_port):
     c = Consumer({
         'bootstrap.servers': kafka_host,
         'group.id': 'dummy-app-kafka-consumer-group-id',
-        'auto.offset.reset': 'earliest'
+        'auto.offset.reset': 'latest'
     })
 
     # Retry logic to wait for topic to become available

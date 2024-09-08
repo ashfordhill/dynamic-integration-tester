@@ -1,0 +1,31 @@
+{
+    "id": "0514755a-9405-4cb9-8b90-b31a209f9504",
+    "test_case_id": "f9f20344-975a-4916-a588-8ceabc1185f6",
+    "function_name": "SendAndReceiveOrTimeout",
+    "sender_connection": {
+        "connectionType": "TCP",
+        "host": "127.0.0.1",
+        "port": 12345
+    },
+    "receiver_connection": {
+        "connectionType": "Kafka",
+        "host": "127.0.0.1",
+        "port": 9094,
+        "topic": "DummyTopic"
+    },
+    "input_file": "cmd3.pcapng",
+    "output_file": "status3.xml",
+    "output": "",
+    "input": "",
+    "status": "success",
+    "timestamp": "2024-09-08T06:07:02.411618",
+    "results": {
+        "result": "Fail",
+        "resultMessage": "Test failed: data mismatch",
+        "details": {
+            "expected": "090a0b0c",
+            "received": "<CmdStatus>Status 2</CmdStatus>",
+            "match": "false"
+        }
+    }
+}

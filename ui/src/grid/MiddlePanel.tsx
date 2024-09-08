@@ -6,7 +6,7 @@ import {
   setReceiverConnection,
   setSenderConnection
 } from '../store/connectionSlice'
-import { TestCaseTable } from './tests/TestCaseTable'
+import { TestCaseTable } from './tests/tables/TestCaseTable'
 import ReceiverOutputWindow from './tests/ReceiverOutputWindow'
 import { SwapHoriz } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'

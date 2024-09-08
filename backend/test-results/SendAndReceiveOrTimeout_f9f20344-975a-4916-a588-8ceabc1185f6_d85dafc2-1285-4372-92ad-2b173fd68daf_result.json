@@ -1,0 +1,31 @@
+{
+    "id": "d85dafc2-1285-4372-92ad-2b173fd68daf",
+    "test_case_id": "f9f20344-975a-4916-a588-8ceabc1185f6",
+    "function_name": "SendAndReceiveOrTimeout",
+    "sender_connection": {
+        "connectionType": "TCP",
+        "host": "127.0.0.1",
+        "port": 12345
+    },
+    "receiver_connection": {
+        "connectionType": "Kafka",
+        "host": "127.0.0.1",
+        "port": 9094,
+        "topic": "DummyTopic"
+    },
+    "input_file": "cmd3.pcapng",
+    "output_file": "status3.xml",
+    "output": "",
+    "input": "",
+    "status": "success",
+    "timestamp": "2024-09-08T06:09:59.145301",
+    "results": {
+        "result": "Pass",
+        "resultMessage": "Test completed",
+        "details": {
+            "expected": "090a0b0c",
+            "received": "<CmdStatus>Status 3</CmdStatus>",
+            "match": "true"
+        }
+    }
+}

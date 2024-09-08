@@ -9,17 +9,23 @@ import {
   selectTestCaseIds,
   selectTestCases,
   executeTestCase,
-  selectTestResults,
   selectTestResultsByTestCaseId
-} from '../../store/testCaseSlice'
-import { AppDispatch } from '../../store/store'
+} from '../../../store/testCaseSlice'
 import { TestResultTable } from './TestResultTable'
-import { TestCase, TestResult, TestResultType } from '../../types/testCase'
-import { CreateTestCasePopup } from './CreateTestCasePopup'
-import { selectReceiverConnection, selectSenderConnection } from '../../store/connectionSlice'
+import { TestCase, TestResult, TestResultType } from '../../../types/testCase'
 import { RemoveCircleOutline } from '@mui/icons-material'
+import { CreateTestCasePopup } from './CreateTestCasePopup'
+import { AppDispatch } from '../../../store/store'
 
 const findLatestResult = (arr: TestResult[]): TestResult | undefined => {
+  if (arr.length === 0) {
+    return undefined
+  }
+
+  if (arr.length === 1) {
+    return arr[0]
+  }
+
   return arr.reduce((latest, current) => {
     // Convert the timestamp strings to Date objects
     const currentDate = new Date(current.rawData.timestamp)
@@ -34,11 +40,16 @@ const RowWithResults: React.FC<{
   row: TestCase
   isExpanded: boolean
   onExpandToggle: (id: string) => void
-  testCaseId: string
-}> = ({ row, isExpanded, onExpandToggle, testCaseId }) => {
-  const testResultsForCase = useSelector(selectTestResultsByTestCaseId(testCaseId))
-  const latestResult = findLatestResult(Object.values(testResultsForCase))
+}> = ({ row, isExpanded, onExpandToggle }) => {
+  const dispatch = useDispatch<AppDispatch>()
+  const testResultsForCase = useSelector(selectTestResultsByTestCaseId(row.id))
+  const latestResult = findLatestResult(testResultsForCase)
   const latestResultPassed: TestResultType | undefined = latestResult?.result
+
+  const handleExecute = () => {
+    dispatch(executeTestCase({ testCaseId: row.id, functionName: row.functionName }))
+  }
+
   return (
     <>
       {/* Main Row */}
@@ -70,7 +81,7 @@ const RowWithResults: React.FC<{
           )}{' '}
         </Grid>
         <Grid item xs={1}>
-          <Button variant='contained' color='primary'>
+          <Button variant='contained' color='primary' onClick={handleExecute}>
             Execute
           </Button>
         </Grid>
@@ -87,24 +98,9 @@ const RowWithResults: React.FC<{
 }
 
 export const TestCaseTable = () => {
-  const dispatch = useDispatch<AppDispatch>()
-  const senderConnection = useSelector(selectSenderConnection)
-  const receiverConnection = useSelector(selectReceiverConnection)
   const testCaseIds: string[] = useSelector(selectTestCaseIds)
-  const testResults: Record<string, TestResult> = useSelector(selectTestResults)
   const testCases: Record<string, TestCase> = useSelector(selectTestCases)
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
-
-  const handleExecute = (testCaseId: string) => {
-    const testCase = testCases[testCaseId]
-    if (testCase) {
-      dispatch(
-        executeTestCase({ testCaseId, senderConnection, receiverConnection, functionName: testCase.functionName })
-      )
-    } else {
-      console.error('Could not find test case with ID of {}', testCaseId)
-    }
-  }
 
   const toggleRowExpansion = (testCaseId: string) => {
     setExpandedRows((prevExpandedRows) => {
@@ -166,7 +162,6 @@ export const TestCaseTable = () => {
           row={row}
           isExpanded={expandedRows.has(row.id)}
           onExpandToggle={toggleRowExpansion}
-          testCaseId={row.id}
         />
       ))}
     </Box>

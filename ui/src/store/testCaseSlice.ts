@@ -56,49 +56,45 @@ export const executeTestCase = createAsyncThunk<
   { testCaseId: string; result: TestResult },
   {
     testCaseId: string
-    senderConnection: ConnectionDetails
-    receiverConnection: ConnectionDetails
     functionName: string
   },
   { state: RootState; rejectValue: string }
->(
-  'testCase/executeTestCase',
-  async ({ testCaseId, functionName, senderConnection, receiverConnection }, { rejectWithValue, getState }) => {
-    try {
-      const state = getState() as RootState
-      const testCase = state[testCaseSliceName].testCases[testCaseId]
-
-      const payload = {
-        testCaseId,
-        functionName,
-        senderConnection,
-        receiverConnection,
-        inputFileName: testCase.inputFileName,
-        outputFileName: testCase.outputFileName || null
-      }
-
-      const response = await axios.post('/api/execute-test', payload)
-      console.debug(JSON.stringify(response, null, 2))
-
-      const rawResult = response.data.results
-
-      const result: TestResult = {
-        id: response.data.id,
-        testCaseId: testCaseId,
-        result: rawResult.result.includes('Pass') ? 'Pass' : 'Fail',
-        resultMessage: rawResult.resultMessage || 'No result message provided',
-        receiverOutput: rawResult.details.received || undefined, // Updated to extract receiverOutput
-        rawData: response.data
-      }
-
-      console.log(JSON.stringify(result))
-
-      return { testCaseId, result }
-    } catch (error) {
-      return rejectWithValue('Error executing the test case.')
+>('testCase/executeTestCase', async ({ testCaseId, functionName }, { rejectWithValue, getState }) => {
+  try {
+    const state = getState() as RootState
+    const testCase = state[testCaseSliceName].testCases[testCaseId]
+    const senderConnection = state.connection.senderConnection
+    const receiverConnection = state.connection.receiverConnection
+    const payload = {
+      testCaseId,
+      functionName,
+      senderConnection,
+      receiverConnection,
+      inputFileName: testCase.inputFileName,
+      outputFileName: testCase.outputFileName || null
     }
+
+    const response = await axios.post('/api/execute-test', payload)
+    console.debug(JSON.stringify(response, null, 2))
+
+    const rawResult = response.data.results
+
+    const result: TestResult = {
+      id: response.data.id,
+      testCaseId: testCaseId,
+      result: rawResult.result.includes('Pass') ? 'Pass' : 'Fail',
+      resultMessage: rawResult.resultMessage || 'No result message provided',
+      receiverOutput: rawResult.details.received || undefined, // Updated to extract receiverOutput
+      rawData: response.data
+    }
+
+    console.log(JSON.stringify(result))
+
+    return { testCaseId, result }
+  } catch (error) {
+    return rejectWithValue('Error executing the test case.')
   }
-)
+})
 
 export const testCaseSliceName = 'testCase'
 const testCaseSlice = createSlice({
@@ -142,7 +138,7 @@ const testCaseSlice = createSlice({
       })
       .addCase(executeTestCase.fulfilled, (state, action) => {
         const { result } = action.payload
-        state.testResultIds.push(result.id)
+        state.testResultIds.unshift(result.id)
         state.testResults[result.id] = result
         if (state.testCases[result.testCaseId]) {
           state.testCases[result.testCaseId].testResultIds.push(result.id)
@@ -180,8 +176,7 @@ export const selectReceiverOutputWindow = (state: RootState) => state[testCaseSl
 // Memoized Selectors
 export const selectTestResultsByTestCaseId = (testCaseId: string) =>
   createSelector([selectTestResults, selectTestResultIds], (testResults) =>
-    Object.values(testResults)
-      .filter((result) => result.testCaseId === testCaseId)
+    Object.values(testResults).filter((result) => result.testCaseId === testCaseId)
   )
 
 export const selectTestResultById = (id: string) =>

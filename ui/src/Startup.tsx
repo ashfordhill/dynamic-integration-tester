@@ -46,8 +46,7 @@ export const Startup: React.FC<StartupProps> = ({ children }) => {
             function_name,
             sender_connection,
             receiver_connection,
-            id: testResultId,
-            results: { result, resultMessage }
+            id: testResultId
           } = testResult
 
           // Create a unique key based on input_file, output_file, function_name, sender and receiver connections
@@ -57,8 +56,8 @@ export const Startup: React.FC<StartupProps> = ({ children }) => {
           const testResultObject: TestResult = {
             id: testResultId, // Use the ID returned from the response
             testCaseId: '', // We'll assign the correct testCaseId later
-            result: result === 'Pass' ? 'Pass' : 'Fail',
-            resultMessage: resultMessage || testResult.error || '',
+            result: testResult.results.result === 'Pass' ? 'Pass' : 'Fail',
+            resultMessage: testResult.results.resultMessage,
             rawData: testResult
           }
 

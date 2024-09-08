@@ -1,0 +1,31 @@
+{
+    "id": "bffcf7d5-2683-4568-a52e-806d85989592",
+    "test_case_id": "f9f20344-975a-4916-a588-8ceabc1185f6",
+    "function_name": "SendAndReceiveOrTimeout",
+    "sender_connection": {
+        "connectionType": "TCP",
+        "host": "127.0.0.1",
+        "port": 12345
+    },
+    "receiver_connection": {
+        "connectionType": "Kafka",
+        "host": "127.0.0.1",
+        "port": 9094,
+        "topic": "DummyTopic"
+    },
+    "input_file": "cmd3.pcapng",
+    "output_file": "status3.xml",
+    "output": "",
+    "input": "",
+    "status": "success",
+    "timestamp": "2024-09-08T06:09:44.356374",
+    "results": {
+        "result": "Fail",
+        "resultMessage": "Test failed: data mismatch",
+        "details": {
+            "expected": "090a0b0c",
+            "received": "<Error>No matching XML for provided data on TCP connection</Error>",
+            "match": "false"
+        }
+    }
+}

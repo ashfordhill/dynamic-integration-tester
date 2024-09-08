@@ -52,7 +52,7 @@ def receive_data_via_kafka(connection_details, result_queue):
         c = Consumer({
             'bootstrap.servers': f"{connection_details['host']}:{connection_details['port']}",
             'group.id': 'my-super-special-group',
-            'auto.offset.reset': 'earliest'
+            'auto.offset.reset': 'latest'
         })
 
         c.subscribe([connection_details['topic']])

@@ -16,8 +16,8 @@ import {
 } from '@mui/material'
 import { CheckCircle, Cancel, Info as InfoIcon, Close } from '@mui/icons-material'
 import { useSelector } from 'react-redux'
-import { selectTestResults } from '../../store/testCaseSlice'
-import { TestResult } from '../../types/testCase'
+import { selectTestResults } from '../../../store/testCaseSlice'
+import { TestResult } from '../../../types/testCase'
 
 interface TestCaseResultsTableProps {
   testResultIds: string[]

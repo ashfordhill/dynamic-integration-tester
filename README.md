@@ -152,13 +152,29 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
 
   - Ensure receiver output is correctly displayed in the receiver output window.
 
-- [ ] **Nest TableContainers in DataGrid Rows for TestCases Display**
+- [✅] **Nest TableContainers in DataGrid Rows for TestCases Display**
 
   - Each TestResult is tied to a TestCase ID but also has its own unique ID. Instead of showing every TestResult in the DataGrid, each row should show the latest test result and then a toggle to open a table underneath the row to show past TestResults (sorted from newest to old).
 
+- [ ] **Store ConnectionSettings In TestResult**
+
+  - The serialized test result already has connection settings info; we wanna store this in Redux as well in the TestResult.
+  - Add buttons in the TestResultTable so user can interact with the ConnectionSettings. Maybe it should open a window and the Test Result's connection settings can be loaded into the 'current' connections by pressing a button..? useful? idk
+  - rm selectors in the TestCaseTable for the sender/receiver connections
+  - also cleanup any unused fields in the serialized test results.
+
+- [ ] **Docker Container Status Fix**
+
+  - Fix Docker container status not showing the proper status; need to fix endpoints
+
+- [ ] **First Pass integration test this application**
+
+  - Want to set up Github Action to run everything, maybe run some tester tool that can click on the UI
+  - load docker compose file up, start all, and execute any commited test cases
+
 - [ ] **Fn-selection added to Create Test Case logic**
 
-  - Consider adding fn-selection to the Create Test Case logic.
+  - Consider adding fn-selection to the Create Test Case logic.✅
   - Idea: Implement a button in the DataGrid that opens the Function drawer with the selected function.
   - Ensure users can't accidentally override pre-defined scripts; consider always saving as new.
   - Check for duplicate names on the front end by querying all functions from the backend.
