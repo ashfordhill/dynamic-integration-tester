@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Button, Box, Typography, IconButton, Grid, Paper } from '@mui/material'
+import { Button, Box, Typography, IconButton, Grid, Paper, useTheme } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
@@ -71,19 +71,21 @@ const RowWithResults: React.FC<{
         <Grid item xs={2}>
           <Typography>{row.outputFileName}</Typography>
         </Grid>
-        <Grid item xs={1}>
-          {latestResultPassed === 'Pass' ? (
-            <CheckCircleIcon color='success' />
-          ) : latestResultPassed === 'Fail' ? (
-            <CancelIcon color='error' />
-          ) : (
-            <RemoveCircleOutline color='disabled' />
-          )}{' '}
-        </Grid>
-        <Grid item xs={1}>
-          <Button variant='contained' color='primary' onClick={handleExecute}>
-            Execute
-          </Button>
+        <Grid item xs={2} container spacing={6}>
+          <Grid item>
+            {latestResultPassed === 'Pass' ? (
+              <CheckCircleIcon color='success' />
+            ) : latestResultPassed === 'Fail' ? (
+              <CancelIcon color='error' />
+            ) : (
+              <RemoveCircleOutline color='disabled' />
+            )}{' '}
+          </Grid>
+          <Grid item>
+            <Button variant='contained' color='primary' onClick={handleExecute}>
+              Execute
+            </Button>
+          </Grid>
         </Grid>
       </Grid>
 
@@ -122,15 +124,15 @@ export const TestCaseTable = () => {
   }, [testCaseIds, testCases])
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '1000px', margin: '0 auto', position: 'relative' }}>
-      <Box display='flex' justifyContent='space-between' alignItems='center' mb={2}>
+    <Box sx={{ width: '100%', maxWidth: '1100px', margin: '0 auto', position: 'relative' }}>
+      <Box display='flex' justifyContent='space-between' alignItems='center' mb={2} mt={2}>
         <Typography variant='h6'>Test Cases</Typography>
         <CreateTestCasePopup />
       </Box>
 
       {/* Table header */}
-      <Paper elevation={3} sx={{ padding: 1, marginBottom: 2 }}>
-        <Grid container spacing={2}>
+      <Paper sx={{ padding: 1, marginBottom: 2, backgroundImage: 'none', transition: 'none' }}>
+        <Grid container>
           <Grid item xs={1}>
             <Typography>Results</Typography> {/* Added for Collapse/Expand */}
           </Grid>
@@ -146,11 +148,13 @@ export const TestCaseTable = () => {
           <Grid item xs={2}>
             <Typography>Output File</Typography>
           </Grid>
-          <Grid item xs={1}>
-            <Typography>Status</Typography>
-          </Grid>
-          <Grid item xs={1}>
-            <Typography>Actions</Typography>
+          <Grid item xs={2} container spacing={4}>
+            <Grid item>
+              <Typography>Status</Typography>
+            </Grid>
+            <Grid item>
+              <Typography>Actions</Typography>
+            </Grid>
           </Grid>
         </Grid>
       </Paper>
