@@ -39,7 +39,7 @@ export interface TestResult {
   id: string
   testCaseId: string
   result: TestResultType
-  rawData?: RawData
+  rawData: RawData
   resultMessage?: string
   receiverOutput?: string
 }
@@ -49,6 +49,7 @@ export interface TestCase {
   inputFileName: string
   outputFileName: string | null
   functionName: string
+  testResultIds: string[]
 }
 
 export interface TestCaseState {
@@ -67,60 +68,6 @@ export const initialState: TestCaseState = {
   testResultIds: [],
   testCases: {},
   testResults: {},
-  loading: false,
-  error: null,
-  lastExecutedTestResultId: undefined,
-  receiverOutputWindowData: undefined
-}
-
-// having this to be able to display visuals from Puppeteer when pushing commits.
-// when querying test case results on startup + Github Actions starts backend, can kill this
-// since past committed test case results will prob be committed to the repo for a while.
-// Dummy data with 3 test cases
-const testCase1Id = uuidv4()
-const testCase2Id = uuidv4()
-const testCase3Id = uuidv4()
-
-const testResult2Id = uuidv4()
-const testResult3Id = uuidv4()
-
-export const dummyDataInitialState: TestCaseState = {
-  testCaseIds: [testCase1Id, testCase2Id, testCase3Id],
-  testResultIds: [testResult2Id, testResult3Id],
-  testCases: {
-    [testCase1Id]: {
-      id: testCase1Id,
-      inputFileName: 'New Text Document.xml',
-      outputFileName: 'New Text Document.xml', // No TestResult for this TestCase
-      functionName: 'SendAndReceiveOrTimeout'
-    },
-    [testCase2Id]: {
-      id: testCase2Id,
-      inputFileName: 'New Text Document.xml',
-      outputFileName: 'New Text Document.xml', // TestCase with a 'fail' TestResult
-      functionName: 'SendAndReceiveOrTimeout'
-    },
-    [testCase3Id]: {
-      id: testCase3Id,
-      inputFileName: 'New Text Document.xml',
-      outputFileName: 'New Text Document.xml', // TestCase with a 'pass' TestResult
-      functionName: 'SendAndReceiveOrTimeout'
-    }
-  },
-  testResults: {
-    [testResult2Id]: {
-      id: testResult2Id,
-      testCaseId: testCase2Id,
-      result: 'Fail',
-      resultMessage: 'Failure example' // Error message for failed TestResult
-    },
-    [testResult3Id]: {
-      id: testResult3Id,
-      testCaseId: testCase3Id,
-      result: 'Pass'
-      // No resultMessage defined for passed TestResult
-    }
-  },
   loading: false,
   error: null,
   lastExecutedTestResultId: undefined,

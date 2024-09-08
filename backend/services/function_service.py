@@ -73,6 +73,7 @@ class FunctionService:
 
     def run_test(
         self, 
+        test_case_id: str,
         function_name: str, 
         sender_connection: Dict[str, Any], 
         receiver_connection: Dict[str, Any], 
@@ -80,6 +81,7 @@ class FunctionService:
         output_file: str
     ) -> Dict[str, Any]:
         try:
+            print(f"Test Case ID: {test_case_id}")
             print(f"Function Name: {function_name}")
             print(f"Sender Connection: {sender_connection}")
             print(f"Receiver Connection: {receiver_connection}")
@@ -141,6 +143,7 @@ class FunctionService:
             # Prepare the result to be returned
             test_result = {
                 "id": f"{uuid.uuid4()}",
+                "test_case_id": test_case_id,
                 "function_name": function_name,
                 "sender_connection": sender_connection,
                 "receiver_connection": receiver_connection,
@@ -158,7 +161,7 @@ class FunctionService:
                 # Save all test results in the test-results directory at the root level
                 test_result_dir = os.path.join(os.getcwd(), 'test-results')
                 os.makedirs(test_result_dir, exist_ok=True)
-                test_result_path = os.path.join(test_result_dir, f"{function_name}_{test_result['id']}_result.json")
+                test_result_path = os.path.join(test_result_dir, f"{function_name}_{test_case_id}_{test_result['id']}_result.json")
 
                 logging.debug(f"Saving test result to {test_result_path}")  # Log the file path
 

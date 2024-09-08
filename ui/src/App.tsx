@@ -24,7 +24,7 @@ interface MiddleContentProps {
 
 const MiddleContent = styled('div', {
   shouldForwardProp: (prop) => prop !== 'leftDrawerOpen' && prop !== 'rightDrawerOpen'
-})<MiddleContentProps>(({ leftDrawerOpen, rightDrawerOpen }) => ({
+})<MiddleContentProps>(() => ({
   flexGrow: 1,
   overflow: 'auto',
   position: 'relative',

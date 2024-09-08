@@ -9,6 +9,7 @@ import uuid  # Import the uuid module
 function_app = Blueprint('function_app', __name__)
 function_service = FunctionService()
 UPLOADS_DIRECTORY = os.path.join(os.getcwd(), 'uploads')
+TEST_CASE_IDS_FILE = os.path.join(os.getcwd(), 'test-cases', 'test_case_ids.json')  # Define the file to store test case IDs
 
 # Ensure uploads directories exist
 os.makedirs(os.path.join(UPLOADS_DIRECTORY, 'inputs'), exist_ok=True)
@@ -57,6 +58,8 @@ def list_functions():
 def execute_test():
     data = request.get_json()
 
+
+    test_case_id = data['testCaseId']
     function_name = data['functionName']
     sender_connection = data['senderConnection']
     receiver_connection = data['receiverConnection']
@@ -70,7 +73,7 @@ def execute_test():
 
     try:
         result = function_service.run_test(
-            function_name, sender_connection, receiver_connection, input_file, output_file
+            test_case_id, function_name, sender_connection, receiver_connection, input_file, output_file
         )
         return jsonify(result), 200 if 'status' in result else 500
     except Exception as e:
@@ -100,7 +103,6 @@ def list_test_results():
 @function_app.route('/api/upload-test-case-resources', methods=['POST'])
 def upload_test_case_resources():
     try:
-        print(f"request: {request}")
         input_file = request.files.get('inputFile')
         output_file = request.files.get('outputFile')
         function_name = request.form.get('functionName')
@@ -121,7 +123,24 @@ def upload_test_case_resources():
             output_file.save(output_file_path)
 
         # Generate a new test case ID
-        test_case_id = uuid.uuid4()
+        test_case_id = str(uuid.uuid4())  # Ensure UUID is a string
+
+        # Persist the test case ID to the file
+        if not os.path.exists(TEST_CASE_IDS_FILE):
+            # If the file doesn't exist, create an empty JSON array
+            with open(TEST_CASE_IDS_FILE, 'w') as file:
+                json.dump([], file)
+
+        # Read the existing test case IDs from the file
+        with open(TEST_CASE_IDS_FILE, 'r') as file:
+            test_case_ids = json.load(file)
+
+        # Append the new test case ID
+        test_case_ids.append(test_case_id)
+
+        # Write the updated test case IDs back to the file
+        with open(TEST_CASE_IDS_FILE, 'w') as file:
+            json.dump(test_case_ids, file, indent=2)
 
         return jsonify({
             "testCaseId": test_case_id,
@@ -132,7 +151,8 @@ def upload_test_case_resources():
 
     except Exception as e:
         print(f"Error: {e}")
-        return jsonify({"error": str(e)}), 500    
+        return jsonify({"error": str(e)}), 500  
+ 
 @function_app.route('/api/save-test-result', methods=['POST'])
 def save_test_result():
     data = request.get_json()

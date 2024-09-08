@@ -43,7 +43,8 @@ export const CreateTestCasePopup: React.FC = () => {
               id: response.data.testCaseId, // Returned from the backend
               inputFileName: response.data.inputFileName,
               outputFileName: response.data.outputFileName || null,
-              functionName: selectedFunction
+              functionName: selectedFunction,
+              testResultIds: []
             })
           )
           setOpen(false)

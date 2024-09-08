@@ -35,32 +35,62 @@ export const Startup: React.FC<StartupProps> = ({ children }) => {
       try {
         const response = await axios.get('/api/test-results')
         const testResults = response.data
-        console.error('Fetched test results:', testResults) // Log fetched results
+        console.log('Fetched test results:', testResults) // Log fetched results
+
+        const testCasesMap: Record<string, TestCase> = {} // Store TestCases by a unique key for grouping
 
         testResults.forEach((testResult: any) => {
-          const testCaseId = uuidv4()
+          const {
+            input_file,
+            output_file,
+            function_name,
+            sender_connection,
+            receiver_connection,
+            id: testResultId,
+            results: { result, resultMessage }
+          } = testResult
 
-          // Create a TestCase
-          const testCase: TestCase = {
-            id: testCaseId,
-            inputFileName: testResult.input_file,
-            outputFileName: testResult.output_file,
-            functionName: testResult.function_name
-          }
+          // Create a unique key based on input_file, output_file, function_name, sender and receiver connections
+          const testCaseKey = `${input_file}-${output_file}-${function_name}-${JSON.stringify(sender_connection)}-${JSON.stringify(receiver_connection)}`
 
-          // Dispatch the TestCase
-          dispatch(addTestCase(testCase))
-
-          // Create a TestResult
+          // Create a TestResult object with the provided testResult.id
           const testResultObject: TestResult = {
-            id: uuidv4(),
-            testCaseId: testCaseId,
-            result: testResult.results.result === 'Pass' ? 'Pass' : 'Fail',
-            resultMessage: testResult.results.resultMessage || testResult.error || ''
+            id: testResultId, // Use the ID returned from the response
+            testCaseId: '', // We'll assign the correct testCaseId later
+            result: result === 'Pass' ? 'Pass' : 'Fail',
+            resultMessage: resultMessage || testResult.error || '',
+            rawData: testResult
           }
+
+          // If we already have a matching TestCase, append the TestResult ID to it
+          if (testCasesMap[testCaseKey]) {
+            testCasesMap[testCaseKey].testResultIds.push(testResultId)
+          } else {
+            // Create a new TestCase for this grouping
+            const testCaseId = uuidv4()
+
+            const testCase: TestCase = {
+              id: testCaseId,
+              inputFileName: input_file,
+              outputFileName: output_file || null,
+              functionName: function_name,
+              testResultIds: [testResultId]
+            }
+
+            // Assign the TestCase to the map
+            testCasesMap[testCaseKey] = testCase
+          }
+
+          // After identifying the TestCase, set the correct testCaseId in TestResult
+          testResultObject.testCaseId = testCasesMap[testCaseKey].id
 
           // Dispatch the TestResult
           dispatch(addTestResult(testResultObject))
+        })
+
+        // Now dispatch all the TestCases
+        Object.values(testCasesMap).forEach((testCase) => {
+          dispatch(addTestCase(testCase))
         })
       } catch (error) {
         console.error('Error fetching test results:', error)

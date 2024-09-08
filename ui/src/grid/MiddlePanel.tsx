@@ -6,7 +6,7 @@ import {
   setReceiverConnection,
   setSenderConnection
 } from '../store/connectionSlice'
-import TestCaseGrid from './tests/TestCaseGrid'
+import { TestCaseTable } from './tests/TestCaseTable'
 import ReceiverOutputWindow from './tests/ReceiverOutputWindow'
 import { SwapHoriz } from '@mui/icons-material'
 import { useDispatch, useSelector } from 'react-redux'
@@ -58,8 +58,8 @@ export const MiddlePanel = () => {
         </Grid>
       </Grid>
 
-      <Grid item xs={12} sm={8} display='flex' justifyContent='center'>
-        <TestCaseGrid />
+      <Grid item xs={12} sm={8} display='contents' justifyContent='center' style={{ minWidth: '900' }}>
+        <TestCaseTable />
       </Grid>
 
       <Grid item xs={12} sm={8} display='flex' justifyContent='center' sx={{ marginTop: 4 }}>

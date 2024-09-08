@@ -69,6 +69,7 @@ export const executeTestCase = createAsyncThunk<
       const testCase = state[testCaseSliceName].testCases[testCaseId]
 
       const payload = {
+        testCaseId,
         functionName,
         senderConnection,
         receiverConnection,
@@ -106,8 +107,17 @@ const testCaseSlice = createSlice({
   reducers: {
     addTestCase: (state, action: PayloadAction<TestCase>) => {
       const newTestCase = action.payload
-      state.testCaseIds.push(newTestCase.id)
-      state.testCases[newTestCase.id] = newTestCase
+      if (state.testCases[newTestCase.id]) {
+        // If the test case already exists, append the new result IDs
+        state.testCases[newTestCase.id].testResultIds = [
+          ...state.testCases[newTestCase.id].testResultIds,
+          ...newTestCase.testResultIds
+        ]
+      } else {
+        // If it's a new test case, add it to the state
+        state.testCaseIds.push(newTestCase.id)
+        state.testCases[newTestCase.id] = newTestCase
+      }
     },
     addTestResult: (state, action: PayloadAction<TestResult>) => {
       const { id } = action.payload
@@ -134,6 +144,11 @@ const testCaseSlice = createSlice({
         const { result } = action.payload
         state.testResultIds.push(result.id)
         state.testResults[result.id] = result
+        if (state.testCases[result.testCaseId]) {
+          state.testCases[result.testCaseId].testResultIds.push(result.id)
+        } else {
+          console.warn(`No Test Case found for ${result.id} result for Test Case ID ${result.testCaseId}`)
+        }
         state.loading = false
         state.lastExecutedTestResultId = result.id // Update last executed test case
         state.receiverOutputWindowData = result.receiverOutput
@@ -163,11 +178,10 @@ export const selectTestResultIds = (state: RootState) => state[testCaseSliceName
 export const selectLastExecuteTestResultId = (state: RootState) => state[testCaseSliceName].lastExecutedTestResultId
 export const selectReceiverOutputWindow = (state: RootState) => state[testCaseSliceName].receiverOutputWindowData
 // Memoized Selectors
-export const selectTestResultByTestCaseId = (testCaseId: string) =>
-  createSelector([selectTestResults], (testResults) =>
+export const selectTestResultsByTestCaseId = (testCaseId: string) =>
+  createSelector([selectTestResults, selectTestResultIds], (testResults) =>
     Object.values(testResults)
-      .reverse()
-      .find((result) => result.testCaseId === testCaseId)
+      .filter((result) => result.testCaseId === testCaseId)
   )
 
 export const selectTestResultById = (id: string) =>
