@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Dialog, DialogActions, DialogContent, DialogTitle, Button, TextField, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import { useDispatch, useSelector } from 'react-redux'
@@ -15,12 +15,22 @@ import {
   setEditorOpen
 } from '../../../store/functionSlice'
 
-const INPUTS_DIRECTORY = '/app/out/uploads/inputs'
-const OUTPUTS_DIRECTORY = '/app/out/uploads/outputs'
+const defaultScriptTemplate = `import sys
+import logging
 
-const defaultScriptTemplate = ``
+if __name__ == "__main__":
+    sender_connection = json.loads(sys.argv[1])
+    receiver_connection = json.loads(sys.argv[2])
+    input_file = sys.argv[3]
+    output_file = sys.argv[4]
 
-// Styled Components using MUI's `styled` utility
+    execute_test(sender_connection, receiver_connection, input_file, output_file)
+
+def execute_test(connection_sender, connection_receiver, input_file, output_file):
+    logging.debug("Starting test..")
+`
+
+// Styled Components
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiPaper-root': {
     backgroundColor: '#1e1e1e',
@@ -47,6 +57,8 @@ const StyledTextField = styled(TextField)({
 const ButtonContainer = styled(Box)({
   display: 'flex',
   justifyContent: 'space-between',
+  flexWrap: 'wrap',
+  gap: '8px',
   marginBottom: '16px',
   marginTop: '16px'
 })
@@ -71,13 +83,22 @@ export const FunctionEditor = () => {
   const handleSave = async () => {
     try {
       if (!error && functionName.trim() && script.trim()) {
-        const response = await axios.post('/api/save-script', { name: functionName, script: script, args: args })
+        const response = await axios.post('/api/save-script', {
+          name: functionName,
+          script: script,
+          args: args
+        })
         dispatch(setConsoleOutput(JSON.stringify(response.data)))
         if (response.status === 200) {
-          dispatch(addFunction({ name: functionName, args: args.split(' ') }))
+          dispatch(
+            addFunction({
+              name: functionName,
+              args: args.split(' ')
+            })
+          )
           setFunctionName('')
           setArgs('')
-          setScript(defaultScriptTemplate) // Reset script to the default template
+          setScript(defaultScriptTemplate)
           handleClose()
         } else {
           setError('Failed to save the function.')
@@ -92,6 +113,14 @@ export const FunctionEditor = () => {
     dispatch(setEditorOpen(false))
   }
 
+  const handleClear = () => {
+    setScript('')
+  }
+
+  const handleReset = () => {
+    setScript(defaultScriptTemplate)
+  }
+
   const handleSelectImport = (importStatement: string) => {
     setScript((prevScript) => `${importStatement}\n${prevScript}`)
   }
@@ -101,9 +130,7 @@ export const FunctionEditor = () => {
   }
 
   const handleSelectTransport = (importStatement: string, transportCode: string) => {
-    // Insert the import statement at the top
     setScript((prevScript) => `${importStatement}\n${prevScript}`)
-    // Insert the transport code at the current position
     setScript((prevScript) => `${prevScript}\n${transportCode}`)
   }
 
@@ -125,6 +152,12 @@ export const FunctionEditor = () => {
           <ImportButton onSelectImport={handleSelectImport} />
           <EnvButton onSelectEnv={handleSelectEnv} />
           <TransportButton onSelectTransport={handleSelectTransport} />
+          <Button onClick={handleClear} variant='contained' color='error'>
+            Clear
+          </Button>
+          <Button onClick={handleReset} variant='contained' color='error'>
+            Reset to Default
+          </Button>
         </ButtonContainer>
         <MonacoEditorWrapper script={script} setScript={setScript} height='400px' width='100%' language='python' />
         <StyledTextField
@@ -132,7 +165,7 @@ export const FunctionEditor = () => {
           value={args}
           onChange={(e) => setArgs(e.target.value)}
           fullWidth
-          helperText='use a single space to separate multiple args'
+          helperText='Use a single space to separate multiple args'
           margin='normal'
           variant='filled'
         />
