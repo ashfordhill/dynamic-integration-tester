@@ -3,7 +3,6 @@ import threading
 import socket
 import logging
 from confluent_kafka import Producer, Consumer, KafkaError
-
 # Configure logging
 logging.basicConfig(
     level=logging.DEBUG,
@@ -20,7 +19,6 @@ data_mapping = {
     '090a0b0c': '<CmdStatus>Status 3</CmdStatus>',
     # Add more mappings as needed
 }
-
 
 reverse_data_mapping = {v: k for k, v in data_mapping.items()}  # Reverse dictionary for XML to .pcapng mapping
 
@@ -132,12 +130,12 @@ def main():
     tcp_host = os.getenv('TCP_HOST', '0.0.0.0')
     tcp_port = int(os.getenv('TCP_PORT', 12345))
     kafka_host = os.getenv('KAFKA_HOST', 'kafka:9092')
-    kafka_topic = os.getenv('KAFKA_TOPIC', 'topic-name')
-
+    kafka_topic = os.getenv('KAFKA_TOPIC', 'DummyTopic')
+    kafka_consumer_topic = os.getenv('KAFKA_CONSUMER_TOPIC', 'ChummyTopic')
     logging.debug("Starting the application...")
 
     threading.Thread(target=tcp_server, args=(tcp_host, tcp_port, lambda xml_data: kafka_producer(kafka_host, kafka_topic, xml_data))).start()
-    threading.Thread(target=kafka_consumer, args=(kafka_host, kafka_topic, tcp_host, tcp_port)).start()
+    threading.Thread(target=kafka_consumer, args=(kafka_host, kafka_consumer_topic, tcp_host, tcp_port)).start()
 
 if __name__ == '__main__':
     main()
