@@ -55,6 +55,9 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
     - Fix file loading and 'start all' functionality.
     - Save loaded files to the backend for persistence.
     - Investigate a library to translate compose data, potentially compatible with TypeScript.
+  - Some annoying issues with this is 
+  - The most important goal with this is to be able to generate and export a CICD-compatible Docker image that can run everything in Bamboo (or wherever).
+  - 
 
 - [✅] **UI Improvements**
 
@@ -86,7 +89,7 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
   - Query the backend for test cases and display them in a table with status indicators (e.g., grey `-` for unrun tests).
 
 - [ ] **Custom Script Template**
-
+  - ~~Code editor populates with a given 'script template'.~~
   - The backend is running the .py scripts for test execution as subprocesses. Because of this, we don't have a clean way to get like a 'result' JSON from user/predefined processes.
     - The workaround right now is to use some markers and pattern matching but this will not be user-friendly in the future.
     - If test scripts had a template pattern to follow, could ditch the subprocess thing and make the backend just run the script, if it has a pre-defined template method that expects 'black box' test args
@@ -104,7 +107,7 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
     - Accessing transport tools.
     - Specifying the file path for output.
 
-- [ ] **Add Clear Button to Code Editor**
+- [✅] **Add Clear Button to Code Editor**
 
   - Replace import button with 'clear' button for the editor
   - Fix some of the imported code statements - chatgpt might have done some weird stuff there
