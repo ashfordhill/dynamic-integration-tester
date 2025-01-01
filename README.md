@@ -26,28 +26,58 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
 
 ## TODO List
 
-- [✅] **Create Checklist**
-
-  - Add a checklist to this `README.md` to track TODOs (✅ done!).
-
-- [ ] **Fix Edit Functions and Add Edit Test Case**
-
-  - Fix the 'edit' feature for functions; currently, it only opens a new function creator.
-  - Add edit button for Test Case inside the DataGrid. Popup should open with current values
-    - rename CreateTestCasePopup to more generic to be inclusive of both editing and creating
-    - have this component take in button name and curr ID of the TestCase being edited or null
-
-- [✅] **Default Functions**
-
-  - Implement default functions for TCP and Kafka send/receive. Ensure scripts can manage connection settings.
-
-- [✅] **File Import**
-
-  - Add a file import feature to the connection settings.
+### New Features
 
 - [ ] **Send-Only Mode**
 
   - Add a 'send-only' mode, enabling users to send data without receiving. Implement this and test case serialization before focusing on test case/assertion features.
+
+- [ ] **Custom Script Template/Interface**
+  - ~~Code editor populates with a given 'script template'.~~
+  - The backend is running the .py scripts for test execution as subprocesses. Because of this, we don't have a clean way to get a 'result' JSON from user/predefined processes.
+    - The workaround right now is to use some markers and pattern matching but this will not be user-friendly in the future.
+      - What this actually means - *SendAndReceiveOrTimeout.py* does:
+        ```
+        print("START_JSON_OUTPUT")
+        print(json.dumps(result))
+        print("END_JSON_OUTPUT")
+        ```
+        and the *function_service.py* does:
+        ```
+                    json_output = ""
+            inside_json = False
+
+            for line in stdout_lines:
+                if line.strip() == "START_JSON_OUTPUT":
+                    inside_json = True
+                    continue
+                elif line.strip() == "END_JSON_OUTPUT":
+                    inside_json = False
+                    break
+                if inside_json:
+                    json_output += line
+        ```
+        KINDA ghetto and not friendly for user-defined Python scripts to execute unlesss this part is abstracted away and then I guess this bandaid is fine. maybe lol.
+
+    - If test scripts had a template pattern to follow, could ditch the subprocess thing and make the backend just run the script, if it has a pre-defined template method that expects 'black box' test args
+  - The template should pre-populate on the FunctionEditor when a user is creating a new script
+
+- [ ] **User defined fn delete**
+
+  - User should be able to delete any function and the companion JSON files in scripts/user_defined, via the UI
+    - maybe deletion can just be client-side so that if someone wants to recover a script from the backend, they can. can just hide on the UI as a selectable fn.
+
+- [ ] **Docker Container Status Fix**
+
+  - Fix Docker container status not showing the proper status; need to fix endpoints
+
+- [ ] **integration test this application**
+
+  - Want to set up Github Action to run everything, maybe run some tester tool that can click on the UI
+  - load docker compose file up, start all, and execute any commited test cases
+
+
+### Tech Debt
 
 - [ ] **Docker Refactor**
 
@@ -57,7 +87,49 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
     - Investigate a library to translate compose data, potentially compatible with TypeScript.
   - Some annoying issues with this is 
   - The most important goal with this is to be able to generate and export a CICD-compatible Docker image that can run everything in Bamboo (or wherever).
-  - 
+    - **If this goal no longer makes sense, ditch this non-trivial feature**
+
+- [ ] **Fn-selection added to Create Test Case logic & cleanup**
+
+  - ~~Consider adding fn-selection to the Create Test Case logic.~~ ✅
+  - Idea: Implement a button in the DataGrid that opens the Function drawer with the selected function.
+  - Ensure users can't accidentally override pre-defined scripts; consider always saving as new.
+  - Check for duplicate names on the front end by querying all functions from the backend.
+
+- [ ] **Fix Edit Functions and Add Edit Test Case**
+
+  - Fix the 'edit' feature for functions; currently, it only opens a new function creator.
+  - Add edit button for Test Case inside the DataGrid. Popup should open with current values
+    - rename CreateTestCasePopup to more generic to be inclusive of both editing and creating
+    - have this component take in button name and curr ID of the TestCase being edited or null
+
+
+- [ ] **Refactor function_controller/service**
+
+  - Split into `storage_` and `execution_` classes to improve clarity.
+  - Remove dead code accumulating in the current structure.
+  - In general, controller should be as dumb as possible and service should have the logic for this pattern I think
+
+- [ ] **Store ConnectionSettings In TestResult**
+
+  - The serialized test result already has connection settings info; we wanna store this in Redux as well in the TestResult.
+  - Add buttons in the TestResultTable so user can interact with the ConnectionSettings. Maybe it should open a window and the Test Result's connection settings can be loaded into the 'current' connections by pressing a button..? useful? idk
+  - rm selectors in the TestCaseTable for the sender/receiver connections
+  - also cleanup any unused fields in the serialized test results.
+
+- [ ] **Terminology Decision**
+
+  - Decide whether to use "script" or "function" as the standard term.
+
+### Completed
+
+- [✅] **Default Functions**
+
+  - Implement default functions for TCP and Kafka send/receive. Ensure scripts can manage connection settings.
+
+- [✅] **File Import**
+
+  - Add a file import feature to the connection settings.
 
 - [✅] **UI Improvements**
 
@@ -74,26 +146,11 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
   - Implement a startup request to the backend to retrieve existing scripts.
     ~~Ensure the UI prevents users from creating duplicate functions/scripts.~~
 
-- [ ] **User defined fn delete**
-
-  - User should be able to delete any function and the companion JSON files in scripts/user_defined, via the UI
-
-- [ ] **Terminology Decision**
-
-  - Decide whether to use "script" or "function" as the standard term.
-
 - [✅] **Test Execution**
 
   - Build out the pass/fail mechanism for test execution.
   - Save test execution data as JSON and send it to the backend.
   - Query the backend for test cases and display them in a table with status indicators (e.g., grey `-` for unrun tests).
-
-- [ ] **Custom Script Template**
-  - ~~Code editor populates with a given 'script template'.~~
-  - The backend is running the .py scripts for test execution as subprocesses. Because of this, we don't have a clean way to get like a 'result' JSON from user/predefined processes.
-    - The workaround right now is to use some markers and pattern matching but this will not be user-friendly in the future.
-    - If test scripts had a template pattern to follow, could ditch the subprocess thing and make the backend just run the script, if it has a pre-defined template method that expects 'black box' test args
-  - The template should pre-populate on the FunctionEditor when a user is creating a new script
 
 - [✅] **Project Management**
 
@@ -117,7 +174,7 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
   - ~~Update `package.json` and review all dependencies for necessary updates.~~
     - prob not worth it; tried doing `npm audit fix --force` and it broke my app
 
-- [ ] **Add backend startup to GitHub Action**
+- [✅] **Add backend startup to GitHub Action**
 
   - Integrate the backend startup process for the Puppeteer automation.
 
@@ -128,11 +185,6 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
 - [✅] **Automate Puppeteer screenshot uploads**
 
   - Implement functionality to auto-upload current screenshots using Puppeteer.
-
-- [ ] **Refactor function_controller/service**
-
-  - Split into `storage_` and `execution_` classes to improve clarity.
-  - Remove dead code accumulating in the current structure.
 
 - [✅] **Serialize test results**
 
@@ -158,26 +210,3 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
 - [✅] **Nest TableContainers in DataGrid Rows for TestCases Display**
 
   - Each TestResult is tied to a TestCase ID but also has its own unique ID. Instead of showing every TestResult in the DataGrid, each row should show the latest test result and then a toggle to open a table underneath the row to show past TestResults (sorted from newest to old).
-
-- [ ] **Store ConnectionSettings In TestResult**
-
-  - The serialized test result already has connection settings info; we wanna store this in Redux as well in the TestResult.
-  - Add buttons in the TestResultTable so user can interact with the ConnectionSettings. Maybe it should open a window and the Test Result's connection settings can be loaded into the 'current' connections by pressing a button..? useful? idk
-  - rm selectors in the TestCaseTable for the sender/receiver connections
-  - also cleanup any unused fields in the serialized test results.
-
-- [ ] **Docker Container Status Fix**
-
-  - Fix Docker container status not showing the proper status; need to fix endpoints
-
-- [ ] **First Pass integration test this application**
-
-  - Want to set up Github Action to run everything, maybe run some tester tool that can click on the UI
-  - load docker compose file up, start all, and execute any commited test cases
-
-- [ ] **Fn-selection added to Create Test Case logic**
-
-  - Consider adding fn-selection to the Create Test Case logic.✅
-  - Idea: Implement a button in the DataGrid that opens the Function drawer with the selected function.
-  - Ensure users can't accidentally override pre-defined scripts; consider always saving as new.
-  - Check for duplicate names on the front end by querying all functions from the backend.
