@@ -11,6 +11,12 @@
    - `pip install -r requirements.txt`
    - `python main.py`
 
+3. In `examples/dummy-black-box-app/` do:
+  - `docker-compose build --no-cache`
+  - `docker-compose up`
+
+For now the dummy black box app has been tested to work well (??? lol) with sending `test-cases/inputs` over TCP (aka the 'Sender Connection') and `test-cases/outputs` over Kafka (aka the 'Receiver Connection').
+
 ### Dependencies
 
 - [Python](https://www.python.org/downloads): `3.12.5`
@@ -103,6 +109,9 @@ This project uses Github Actions and [Puppeteer](https://pptr.dev/) so that ever
     - rename CreateTestCasePopup to more generic to be inclusive of both editing and creating
     - have this component take in button name and curr ID of the TestCase being edited or null
 
+- [ ] **Annoying Kafka Connection Issue Fix**
+
+  - The first time the `.py` fn tries to connect to Kafka (a 'fresh instance' of Kafka), it's a bit slow with setting up all the connection stuff, so the test case being executed will fail from timeout. BUT, after that first failure, everything is fine, while the Kafka instance is still running.
 
 - [ ] **Refactor function_controller/service**
 
