@@ -1,4 +1,3 @@
-import os
 import sys
 import time
 import json
@@ -51,7 +50,7 @@ def receive_data_via_kafka(connection_details, result_queue):
     try:
         c = Consumer({
             'bootstrap.servers': f"{connection_details['host']}:{connection_details['port']}",
-            'group.id': 'my-super-special-group',
+            'group.id': f'my-super-special-group-{int(time.time())}',  # Unique group ID for each run
             'auto.offset.reset': 'latest'
         })
 
@@ -60,7 +59,7 @@ def receive_data_via_kafka(connection_details, result_queue):
 
         start_time = time.time()
         timeout = 30  # Increase timeout to 30 seconds
-
+        
         while True:
             if time.time() - start_time > timeout:
                 error_message = "Kafka polling timed out after 30 seconds"
@@ -77,9 +76,7 @@ def receive_data_via_kafka(connection_details, result_queue):
             if msg.error():
                 error_message = f"Kafka error: {msg.error()}"
                 logging.error(error_message)
-                result_queue.put({"status": "failure", "error": error_message})
-                c.close()
-                return
+                continue
             logging.error(f"Received message from Kafka: {msg.value().decode('utf-8')}")
             result_queue.put({"status": "success", "data": msg.value().decode('utf-8')})
             c.close()
@@ -124,6 +121,7 @@ def execute_test(connection_sender, connection_receiver, input_file, output_file
             logging.debug("Starting Kafka consumer thread")
             receive_thread = threading.Thread(target=receive_data_via_kafka, args=(connection_receiver, result_queue))
             receive_thread.start()
+            time.sleep(10) # Before continuing on to send something out on TCP
 
         # Send data after Kafka consumer is set up
         if connection_sender['connectionType'] == 'Kafka':
@@ -140,6 +138,7 @@ def execute_test(connection_sender, connection_receiver, input_file, output_file
             result["resultMessage"] = send_result["error"]
             return result  # Return failure result if sending data failed
 
+        # I don't think this works idk
         if connection_receiver['connectionType'] == 'TCP':
             receive_result = receive_data_via_tcp(connection_receiver)
         else:
