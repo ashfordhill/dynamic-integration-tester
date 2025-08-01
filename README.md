@@ -1,5 +1,29 @@
 # dynamic-integration-tester
 
+## About
+
+The main aim for this project was to create a generic integration testing application that could be friendly for non-software developers to use.
+The gain from using such a tool would be less manual mistakes when testing apps, help test engineers and encourage more integration testing overall. If test engineers could use AI tools to help come up with simple scripts to add to the tool, even less developer overhead would be needed.
+
+If the application is black box and can be tested as in: "Feed me data on a connection, and I will output another type of data on another connection", the goal was
+to have this app be able to offer a visually-interactive way to build test cases for an existing app, serialize them and be able to re-run test cases. Various data formats and connection types were planned to be supported such as:
+
+ - TCP
+ - Kafka
+ - ActiveMQ
+
+Long-reaching goals included:
+
+   - A headless mode that can be run in a CICD pipeline and/or a way to generate serialized test cases into a CICD file, e.g. a `.github/workflows` file.
+
+   - A 'white box' testing mode as planned for applications that need more logic added than simple input/output.
+      - This was intended to provide a way for the user to write Python scripts inside the application to account for custom logic, given some type of interface that this tool knows how to communicate with (to determine whether something passed, failed, etc.).
+      - Python scripts are saved to the backend and can be reused or shared with others.
+   - Possibly some type of Docker API integration so people wouldn't have to swap between running their test environment via Docker/Docker Compose and using this tool. All-in-one basically, but eh.
+
+Integration testing can afford developers a lot of freedom to refactor as they please without worrying about breaking core functionality. They also help avoid mistakes that aren't often caught in unit tests and are more reusuable than writing 100's of unit tests. Integration tests support the 'failing fast and safe' principle.
+There are somewhat tedious problems to solve to get integration tests to work; if they were easier to implement and integrate in a CICD pipeline..world peace??
+
 ## Usage
 
 1. In `ui/` do:
